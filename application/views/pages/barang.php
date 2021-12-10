@@ -9,11 +9,44 @@
               <h5 class="card-title">Master Barang</h5>
               
               <div class="row">
-                <div class="col-3">
-                  <button class="btn btn-sm btn-primary rounded-pill" style="margin-bottom: 10px;" id="add_data"><i class="bi bi-cloud-plus-fill"></i> Tambah</button>
-                </div>
+                <table  style="width:60%">
+                  <tr>
+                    <td>
+                      <button class="btn btn-sm btn-primary rounded-pill" style="margin-bottom: 10px;" id="add_data"><i class="bi bi-cloud-plus-fill"></i> Tambah</button>
+                    </td>
+                    <td>
+                      Kategori
+                    </td>
+                    <td>
+                      <select class="form-select" name="src_kategori" onchange="REFRESH_DATA()">
+                        <option value="">All</option>
+                        <?php
+                          foreach($kategori as $kat){
+                            echo "<option value='".$kat->id_kategori."'>".$kat->deskripsi."</option>";
+                          }
+                        ?>
+                      </select>
+                    </td>
+                    <td>
+                      Lab
+                    </td>
+                    <td>
+                      <select class="form-select" name="src_laborat" onchange="REFRESH_DATA()">
+                        <option value="">All</option>
+                        <?php
+                          foreach($laborat as $lab){
+                            echo "<option value='".$lab->id_laborat."'>".$lab->deskripsi."</option>";
+                          }
+                        ?>
+                      </select>
+                    </td>
+                  </tr>
+                </table>
               </div>
-              
+              <?php
+                // print_r($kategori);
+                // print_r($laborat);
+              ?>
               <table id="tb_data" class="table table-bordered table-striped" style="font-size:12px;">
                 <thead>
                   <tr style="text-align: center;">
@@ -44,7 +77,7 @@
       <div class="modal fade" id="modal_add" tabindex="-1">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
-            <form id="FRM_DATA">
+            <form id="FRM_DATA" method="post" enctype="multipart/form-data">
               <div class="modal-header">
                 <h5 class="modal-title">Data</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -54,14 +87,26 @@
                   <div class="col-sm-6">
                     <div class="form-group">
                       <label>Kategori</label>
-                      <select name="id_kategori" id="" class="form-select">
+                      <select name="id_kategori" id="" class="form-select" onchange="generate_kode()">
+                        <option value="" disabled selected> - Pilih - </option>
+                        <?php
+                          foreach($kategori as $kat){
+                            echo "<option value='".$kat->id_kategori."'>".$kat->deskripsi."</option>";
+                          }
+                        ?>
                       </select>
                     </div>
                   </div>
                   <div class="col-sm-6">
                     <div class="form-group">
                       <label>Laboratorium</label>
-                      <select name="id_laborat" id="" class="form-select">
+                      <select name="id_laborat" id="" class="form-select" onchange="generate_kode()">
+                        <option value="" disabled selected> - Pilih - </option>
+                        <?php
+                          foreach($laborat as $lab){
+                            echo "<option value='".$lab->id_laborat."'>".$lab->deskripsi."</option>";
+                          }
+                        ?>
                       </select>
                     </div>
                   </div>
@@ -76,7 +121,7 @@
                   <div class="col-sm-6">
                     <div class="form-group">
                       <label>Deskrispsi</label>
-                      <input type="text" class="form-control" name="nama_barang" required>
+                      <textarea name="nama_barang"  class="form-control" required></textarea>
                     </div>
                   </div>
                 </div>
@@ -98,7 +143,7 @@
                   <div class="col-sm-6">
                     <div class="form-group">
                       <label>Min Stock</label>
-                      <input type="text" class="form-control" name="min_stock" required>
+                      <input type="text" class="form-control" name="min_stock" >
                     </div>
                   </div>
                   <div class="col-sm-6">
@@ -121,7 +166,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="BTN_SAVE">Save changes</button>
+                <button type="submit" class="btn btn-primary" id="BTN_SAVE">Save changes</button>
               </div>
             </form>
           </div>
@@ -151,16 +196,15 @@
         $("#modal_add").modal('show')
       })
 
-      $("#BTN_SAVE").click(function(){
+      $("#FRM_DATA").on('submit', function(event){
         event.preventDefault();
-        var formData = $("#FRM_DATA").serialize();
-        
+        let formData = new FormData(this);
+
         
         if(save_method == 'save') {
             urlPost = "<?php echo site_url('barang/saveData') ?>";
         }else{
-            urlPost = "<?php echo site_url('barang/updateData') ?>";
-            formData+="&id_barang="+id_data
+            urlPost = "<?php echo site_url('barang/updateData/') ?>"+id_data;
         }
         // console.log(formData)
         ACTION(urlPost, formData)
@@ -203,7 +247,7 @@
               { "data": null, 
                 "render" : function(data){
                   return "<button class='btn btn-sm btn-warning' title='Edit Data' onclick='editData("+JSON.stringify(data)+");'><i class='bi bi-pencil-square'></i> </button> "+
-                    "<button class='btn btn-sm btn-danger' title='Hapus Data' onclick='deleteData(\""+data.no_induk+"\");'><i class='bi bi-trash'></i> </button>"
+                    "<button class='btn btn-sm btn-danger' title='Hapus Data' onclick='deleteData(\""+data.id_barang+"\");'><i class='bi bi-trash'></i> </button>"
                 },
                 className: "text-center"
               },
@@ -254,24 +298,59 @@
     function editData(data, index){
       console.log(data)
       save_method = "edit"
-      id_data = data.no_induk;
+      id_data = data.id_barang;
+      $("[name='foto']").val('')
+      $("#lbl_foto").text("Ganti Foto")
       $("#modal_add .modal-title").text('Edit Data')
-      $("[name='no_induk']").val(data.no_induk)
-      $("[name='nama']").val(data.nama)
-      $("[name='alamat']").val(data.alamat)
-      $("[name='no_telp']").val(data.no_telp)
-      $("[name='no_wa']").val(data.no_wa)
-      $("[name='jekel']").val(data.jekel)
-      $("[name='username']").val(data.username)
-      $("[name='password']").val(data.password)
-      $("[name='hak_akses']").val(data.hak_akses)
-      $("[name='status']").val(data.status)
+      $("[name='id_barang']").val(data.id_barang)
+      $("[name='nama_barang']").val(data.nama_barang)
+      $("[name='stock']").val(data.stock)
+      $("[name='stock_tersedia']").val(data.stock_tersedia)
+      $("[name='harga_beli']").val(data.harga_beli.replaceAll(".",""))
+      $("[name='min_stock']").val(data.min_stock)
+      $("[name='id_kategori']").val(data.id_kategori)
+      $("[name='id_laborat']").val(data.id_laborat)
 
-      $("[name='no_induk']").attr('readonly', true)
       $("#modal_add").modal('show')
     }
 
     function ACTION(urlPost, formData){
+      $.ajax({
+        url: urlPost,
+        type: "POST",
+        data: formData,
+        beforeSend: function(){
+          $("#LOADER").show();
+        },
+        complete: function(){
+          $("#LOADER").hide();
+        },
+        processData : false,
+        cache: false,
+        contentType : false,
+        success: function(data){
+          data = JSON.parse(data)
+          console.log(data)
+          if (data.status == "success") {
+            toastr.info(data.message)
+            REFRESH_DATA()
+
+          }else{
+            toastr.error(data.message)
+          }
+        },
+        error: function (err) {
+          console.log(err);
+        }
+      })
+    }
+
+    function deleteData(id){
+      if(!confirm('Delete this data?')) return
+
+      urlPost = "<?php echo site_url('barang/deleteData') ?>";
+      formData = "id_barang="+id
+      
       $.ajax({
           url: urlPost,
           type: "POST",
@@ -284,9 +363,11 @@
             $("#LOADER").hide();
           },
           success: function(data){
-            console.log(data)
+            // console.log(data)
             if (data.status == "success") {
               toastr.info(data.message)
+              
+
               REFRESH_DATA()
 
             }else{
@@ -296,11 +377,20 @@
       })
     }
 
-    function deleteData(id){
-      if(!confirm('Delete this data?')) return
-
-      urlPost = "<?php echo site_url('barang/deleteData') ?>";
-      formData = "id_barang="+id
-      ACTION(urlPost, formData)
+    function generate_kode(){
+      if($("[name='id_kategori']").val() && $("[name='id_laborat']").val()){
+        $.ajax({
+          url: "<?php echo site_url('barang/generate_kode') ?>",
+          type: "POST",
+          data: {
+            id_kategori : $("[name='id_kategori']").val(),
+            id_laborat : $("[name='id_laborat']").val()
+          },
+          success: function(data){
+            $("[name='id_barang']").val(data)
+          }
+        })
+      }
+      
     }
   </script>

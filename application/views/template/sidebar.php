@@ -42,7 +42,7 @@
             </a>
           </li>
           <li>
-            <a href="#">
+            <a href="<?php echo base_url("barang/")?>">
               <i class="bi bi-circle"></i><span>Master Barang</span>
             </a>
           </li>

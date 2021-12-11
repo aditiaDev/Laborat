@@ -53,7 +53,7 @@
       <li class="nav-heading">Transaksi</li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
+        <a class="nav-link collapsed" href="<?php echo base_url("peminjaman/")?>">
           <i class="bi bi-eyedropper"></i>
           <span>Peminjaman Alat</span>
         </a>

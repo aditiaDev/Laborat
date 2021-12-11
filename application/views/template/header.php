@@ -36,11 +36,67 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
-  <STYle>
+  <style>
     label{
       font-family: 'bootstrap-icons';
     }
-  </STYle>
+
+    .tabel {
+      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+
+    .tabel td, .tabel th {
+      border: 1px solid #ddd;
+      padding: 8px;
+      
+    }
+
+    .tabel tr:nth-child(even){background-color: #f2f2f2;}
+
+    .tabel tr:hover {background-color: #ddd;}
+
+    .tabel th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #4CAF50;
+      color: white;
+    }
+    .tabel thead th { 
+      position: sticky; 
+      top: 0; 
+      z-index: 1;
+      resize: horizontal;
+      overflow: auto;
+    }
+
+    .tb_no_top{
+      font-family: serif;
+    }
+    
+    .tb_no_top>thead>tr>th{
+        border: none;
+        vertical-align: middle;
+    }
+    .tb_no_top>tbody>tr>td{
+        border-bottom: none;
+        vertical-align: middle;
+    }
+    .slimScrollBar{
+      width: 10px!important;
+      background: rgb(204, 204, 204)!important;
+      border-radius: 0px!important;
+    }
+    .content-wrapper{
+      font-size: 12px;
+    }
+    .skin-blue-light .treeview-menu>li.active>a {
+      font-weight: 400;
+    }
+  </style>
 </head>
 
 <body>

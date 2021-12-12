@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 09 Des 2021 pada 15.26
+-- Waktu pembuatan: 12 Des 2021 pada 16.17
 -- Versi server: 10.4.10-MariaDB
 -- Versi PHP: 7.3.12
 
@@ -39,6 +39,14 @@ CREATE TABLE `tb_barang` (
   `id_kategori` varchar(10) DEFAULT NULL,
   `id_laborat` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `tb_barang`
+--
+
+INSERT INTO `tb_barang` (`id_barang`, `nama_barang`, `stock`, `stock_tersedia`, `harga_beli`, `min_stock`, `foto`, `id_kategori`, `id_laborat`) VALUES
+('LFS01KM0001', 'test 1', 3, 2, 50000, 0, '1639144885427.jpg', 'KM', 'LFS01'),
+('LKM01KM0001', 'test 3', 4, 2, 400000, 0, '1639144822275.png', 'KM', 'LKM01');
 
 -- --------------------------------------------------------
 
@@ -81,9 +89,21 @@ CREATE TABLE `tb_dtl_peminjaman` (
   `id_barang` varchar(20) DEFAULT NULL,
   `qty_pinjam` int(11) DEFAULT NULL,
   `qty_approved` int(11) DEFAULT NULL,
-  `status` enum('approved','not approved') DEFAULT NULL,
+  `status` enum('Approved','Not Approved','Proses','Selesai') DEFAULT NULL,
   `id_peminjaman` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `tb_dtl_peminjaman`
+--
+
+INSERT INTO `tb_dtl_peminjaman` (`id_dtl_peminjaman`, `id_barang`, `qty_pinjam`, `qty_approved`, `status`, `id_peminjaman`) VALUES
+(1, 'LKM01KM0001', 2, 0, 'Proses', 'PJ2021120001'),
+(2, 'LKM01KM0001', 2, 2, 'Proses', 'PJ2021120002'),
+(3, 'LKM01KM0001', 2, 2, 'Proses', 'PJ2021120003'),
+(4, 'LKM01KM0001', 1, 1, 'Proses', 'PJ2021120003'),
+(5, 'LKM01KM0001', 2, 2, 'Proses', 'PJ2021120004'),
+(6, 'LKM01KM0001', 2, 2, 'Proses', 'PJ2021120005');
 
 -- --------------------------------------------------------
 
@@ -179,13 +199,25 @@ CREATE TABLE `tb_peminjaman` (
   `tgl_pengajuan` date DEFAULT NULL,
   `pinjam_mulai` date DEFAULT NULL,
   `pinjam_sampai` date DEFAULT NULL,
-  `tgl_kembali` date NOT NULL,
-  `ket_kembali` text NOT NULL,
+  `tgl_kembali` date DEFAULT NULL,
+  `denda_keterlambatan` float DEFAULT NULL,
+  `ket_kembali` text DEFAULT NULL,
   `keterangan` text DEFAULT NULL,
-  `status` enum('proses','approved','not approved','selesai') DEFAULT NULL,
+  `status` enum('Proses','Approved','Not Approved','Selesai') DEFAULT NULL,
   `no_induk` varchar(30) DEFAULT NULL,
   `id_periode` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `tb_peminjaman`
+--
+
+INSERT INTO `tb_peminjaman` (`id_peminjaman`, `tgl_pengajuan`, `pinjam_mulai`, `pinjam_sampai`, `tgl_kembali`, `denda_keterlambatan`, `ket_kembali`, `keterangan`, `status`, `no_induk`, `id_periode`) VALUES
+('PJ2021120001', '2021-12-12', '2021-12-13', '2021-12-14', NULL, NULL, NULL, '', 'Proses', '0012345678', 2),
+('PJ2021120002', '2021-12-12', '2021-12-12', '2021-12-13', NULL, NULL, NULL, 'test', 'Selesai', '0012345678', 2),
+('PJ2021120003', '2021-12-12', '2021-12-12', '2021-12-14', NULL, NULL, NULL, 'dsdsf', 'Proses', '0012345678', 2),
+('PJ2021120004', '2021-12-12', '2021-12-12', '2021-12-14', NULL, NULL, NULL, 'test', 'Proses', '0012345678', 2),
+('PJ2021120005', '2021-12-12', '2021-12-14', '2021-12-15', NULL, NULL, NULL, 'asds', 'Proses', '0012345678', 2);
 
 -- --------------------------------------------------------
 
@@ -413,7 +445,7 @@ ALTER TABLE `tb_dtl_monitoring`
 -- AUTO_INCREMENT untuk tabel `tb_dtl_peminjaman`
 --
 ALTER TABLE `tb_dtl_peminjaman`
-  MODIFY `id_dtl_peminjaman` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_dtl_peminjaman` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT untuk tabel `tb_dtl_pengadaan`

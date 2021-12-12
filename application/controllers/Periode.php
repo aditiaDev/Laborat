@@ -5,15 +5,12 @@ class Periode extends CI_Controller {
 
   public function __construct(){
     parent::__construct();
-    // if(!$this->session->userdata('no_induk'))
-    //   redirect('login', 'refresh');
+    if(!$this->session->userdata('no_induk'))
+      redirect('login', 'refresh');
 
   }
 
   public function index(){
-    // $data['model'] = $this->UserModel->getData();
-
-    // $this->load->view('home', $data);
     $this->load->view('template/header');
     $this->load->view('template/sidebar');
     $this->load->view('pages/periode');

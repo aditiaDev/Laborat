@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Components / Accordion - NiceAdmin Bootstrap Template</title>
+  <title>SiLabKu</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -25,11 +25,43 @@
   <link href="<?php echo base_url('/assets/NiceAdmin/assets/vendor/remixicon/remixicon.css'); ?>" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="<?php echo base_url('/assets/DataTables2/datatables.min.css'); ?>"/>
   <link rel="stylesheet" href="<?php echo base_url('/assets/toastr/toastr.min.css'); ?>">
+  <link href="<?php echo base_url('/assets/datepicker/gijgo.min.css'); ?>" rel="stylesheet" type="text/css" />
 
   <!-- Template Main CSS File -->
   <link href="<?php echo base_url('/assets/NiceAdmin/assets/css/style.css'); ?>" rel="stylesheet">
   
+  <script>
+    
+    function ACTION_MENU(){
+      var htmlMenu = '<button class="btn btn-sm btn-outline-secondary" id="BTN_NEW"><i class="bi bi-card-text"></i> New</button> '+
+      '<button class="btn btn-sm btn-outline-secondary" id="BTN_EDIT"><i class="bi bi-pencil-square"></i> Edit</button> '+
+      '<button class="btn btn-sm btn-outline-primary" id="BTN_SAVE"><i class="bi bi-save-fill"></i> Save</button> '+
+      '<button class="btn btn-sm btn-outline-warning" id="BTN_BATAL"><i class="bi bi-x-octagon-fill"></i> Batal</button> '+
+      '<button class="btn btn-sm btn-outline-success" id="BTN_PRINT"><i class="bi bi-printer"></i></button> '+
+      '<button class="btn btn-sm btn-outline-danger" id="BTN_DELETE"><i class="bi bi-trash"></i></button>'
 
+      $("#search-bar").append(htmlMenu)
+    }
+
+    function onlyNumberKey(evt) {
+          
+        // Only ASCII character in that range allowed
+        var ASCIICode = (evt.which) ? evt.which : evt.keyCode
+        if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+            return false;
+        return true;
+    }
+
+    function BUTTON_ACTION(param){
+      $("#BTN_NEW").attr('disabled', param)
+      $("#BTN_EDIT").attr('disabled', param)
+      $("#BTN_SAVE").attr('disabled', param)
+      $("#BTN_BATAL").attr('disabled', param)
+      $("#BTN_PRINT").attr('disabled', param)
+      $("#BTN_DELETE").attr('disabled', param)
+    }
+    
+  </script>
   <!-- =======================================================
   * Template Name: NiceAdmin - v2.2.0
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -73,6 +105,16 @@
       overflow: auto;
     }
 
+    .tabel tbody tr td{
+      font-size: 14px;
+      font-family: serif;
+    }
+
+    .tabel tbody tr td input{
+      font-size: 14px;
+      font-family: serif;
+    }
+
     .tb_no_top{
       font-family: serif;
     }
@@ -112,11 +154,11 @@
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
 
-    <div class="search-bar">
-      <form class="search-form d-flex align-items-center" method="POST" action="#">
+    <div class="search-bar" id="search-bar">
+      <!-- <form class="search-form d-flex align-items-center" method="POST" action="#">
         <input type="text" name="query" placeholder="Search" title="Enter search keyword">
         <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-      </form>
+      </form> -->
     </div><!-- End Search Bar -->
 
     <nav class="header-nav ms-auto">

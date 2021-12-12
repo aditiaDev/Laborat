@@ -9,7 +9,7 @@ class Login extends CI_Controller {
   }
 
   public function index(){
-    if($this->session->userdata('id_user'))
+    if($this->session->userdata('no_induk'))
       redirect('home', 'refresh');
 
     $this->load->view('login');
@@ -23,9 +23,10 @@ class Login extends CI_Controller {
       foreach ($query->result() as $row)
       {   
         $arrdata = array(
-          'id_user'=>$row->id_user,
-          'level'=>$row->level,
+          'no_induk'=>$row->no_induk,
+          'hak_akses'=>$row->hak_akses,
           'username'=>$row->username,
+          'nama'=>$row->nama,
         );  
           $this->session->set_userdata($arrdata);
       }
@@ -39,7 +40,7 @@ class Login extends CI_Controller {
   }
 
   function logout(){
-    $this->session->unset_userdata('id_user');
+    $this->session->unset_userdata('no_induk');
     $this->session->sess_destroy();
     redirect('/', 'refresh');
   }

@@ -127,7 +127,7 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
+        <a class="nav-link collapsed" href="<?php echo base_url("Login/logout")?>">
           <i class="bi bi-box-arrow-in-left"></i>
           <span>Logout</span>
         </a>

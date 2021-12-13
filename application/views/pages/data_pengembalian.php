@@ -89,7 +89,7 @@
           "autoWidth": false,
           "responsive": true,
           "ajax": {
-              "url": "<?php echo site_url('Peminjaman/getAllData') ?>",
+              "url": "<?php echo site_url('Pengembalian/getAllData') ?>",
               "type": "POST",
           },
           "columns": [
@@ -101,8 +101,7 @@
               { "data": "status"},
               { "data": null, 
                 "render" : function(data){
-                  return "<a class='btn btn-sm btn-info' href='<?php echo base_url('peminjaman/dtlData/"+data.id_peminjaman+"')?>' title='View Data'><i class='bi bi-eye-fill'></i> </a> "+
-                    "<button class='btn btn-sm btn-danger' title='Hapus Data' onclick='deleteData(\""+data.id_peminjaman+"\");'><i class='bi bi-trash'></i> </button>"
+                  return "<button class='btn btn-sm btn-warning' title='Pengembalian' onclick='editData(\""+data.id_peminjaman+"\");'>Kembali</button>"
                 },
                 className: "text-center"
               },
@@ -137,11 +136,4 @@
       })
     }
 
-    function deleteData(id){
-      if(!confirm('Delete this data?')) return
-
-      urlPost = "<?php echo site_url('Peminjaman/deleteData') ?>";
-      formData = "id_peminjaman="+id
-      ACTION(urlPost, formData)
-    }
   </script>

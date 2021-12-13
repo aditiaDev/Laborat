@@ -26,6 +26,17 @@ class Peminjaman extends CI_Controller {
     $this->load->view('template/footer');
   }
 
+  public function getAllData(){
+    $data['data'] = $this->db->query("SELECT a.id_peminjaman, DATE_FORMAT(a.tgl_pengajuan, '%d-%b-%Y') tgl_pengajuan, 
+    concat(DATE_FORMAT(a.pinjam_mulai, '%d-%b-%Y'), ' - ', DATE_FORMAT(a.pinjam_sampai, '%d-%b-%Y')) tgl_peminjaman , a.keterangan,
+    a.status, a.no_induk, b.hak_akses, b.nama, b.no_wa, c.periode
+    FROM tb_peminjaman a, tb_user b, tb_periode c
+    where a.no_induk=b.no_induk
+    and a.id_periode=c.id_periode
+    and a.status <> 'Selesai'")->result();;
+    echo json_encode($data);
+  }
+
   public function dtlData($id){
 
     $data['id'] = $id;
@@ -58,13 +69,13 @@ class Peminjaman extends CI_Controller {
     echo json_encode($data);
   }
 
-  public function getAllData(){
-    $data['data'] = $this->db->query("SELECT a.id_peminjaman, DATE_FORMAT(a.tgl_pengajuan, '%d-%b-%Y') tgl_pengajuan, a.pinjam_mulai, a.pinjam_sampai, a.keterangan,
-    a.status, a.no_induk, b.hak_akses, b.nama, b.no_wa, c.periode
-    FROM tb_peminjaman a, tb_user b, tb_periode c
-    where a.no_induk=b.no_induk
-    and a.id_periode=c.id_periode
-    and a.status <> 'Selesai'")->result();;
+  public function getDataItems(){
+    $id_peminjaman = $this->input->post('id_peminjaman');
+    $data = $this->db->query("SELECT a.id_barang, b.nama_barang, a.qty_pinjam, a.qty_approved, b.stock_tersedia 
+    FROM tb_dtl_peminjaman a, tb_barang b
+    where a.id_barang=b.id_barang
+    and a.id_peminjaman='".$id_peminjaman."'")->result_array();
+
     echo json_encode($data);
   }
 
@@ -187,8 +198,11 @@ class Peminjaman extends CI_Controller {
   }
 
   public function deleteData(){
-    $this->db->where('no_induk', $this->input->post('no_induk'));
-    $this->db->delete('tb_user');
+    $this->db->where('id_peminjaman', $this->input->post('id_peminjaman'));
+    $this->db->delete('tb_dtl_peminjaman');
+
+    $this->db->where('id_peminjaman', $this->input->post('id_peminjaman'));
+    $this->db->delete('tb_peminjaman');
 
     $output = array("status" => "success", "message" => "Data Berhasil di Hapus");
     echo json_encode($output);

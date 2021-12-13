@@ -43,23 +43,31 @@
                     </tr>
                   </table>
                 </div>
+                <?php  if($this->session->userdata('hak_akses') == "laboran" ){ ?>
                 <div class="col-lg-12">
-                <div style="position: relative;height: 400px;overflow: auto;display: block;">
-                  <table class="tabel" id="tb_data" style="/*width:1000px;*/font-size: 12px;">
-                    <thead>
-                      <th style="width: 60px;"><button class="btn btn-sm btn-light" id="ADD_ITEM"><i class="bi bi-plus-square"></i></button></th>
-                      <th style="width: 170px;">Item No</th>
-                      <th style="width: 60px;"></th>
-                      <th style="width: 300px;">Description</th>
-                      <th style="width: 170px;">Jml Pinjam</th>
-                      <th>Jml di Setujui</th>
-                      <th>Stock Tersedia</th>
-                    </thead>
-                    <tbody >
-                        
-                    </tbody>
-                  </table>
+                  <div style="justify-content: center;display: flex;margin-bottom: 15px;">
+                    <button type="button" id="BTN_APPROVE" class="btn btn-sm btn-warning" style="margin-right: 10px;" ><i class="bi bi-check2-all"></i> Approve</button>
+                    <button type="button" id="BTN_NOT_APPROVE" class="btn btn-sm btn-danger" ><i class="bi bi-x-circle"></i> Not Approve</button>
+                  </div>
                 </div>
+                <?php } ?>
+                <div class="col-lg-12">
+                  <div style="position: relative;height: 400px;overflow: auto;display: block;">
+                    <table class="tabel" id="tb_data" style="/*width:1000px;*/font-size: 12px;">
+                      <thead>
+                        <th style="width: 60px;"><button class="btn btn-sm btn-light" id="ADD_ITEM"><i class="bi bi-plus-square"></i></button></th>
+                        <th style="width: 170px;">Item No</th>
+                        <th style="width: 60px;"></th>
+                        <th style="width: 300px;">Description</th>
+                        <th style="width: 170px;">Jml Pinjam</th>
+                        <th>Jml di Setujui</th>
+                        <th>Stock Tersedia</th>
+                      </thead>
+                      <tbody >
+                          
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -144,9 +152,17 @@
   
   <?php    
     if(@$id){
-      echo "REFRESH_DATA('".$id."')";
-    }
+      // echo "REFRESH_DATA('".$id."')";
   ?>
+      REFRESH_DATA('<?php echo $id; ?>')
+      
+
+      BUTTON_ACTION(false)
+      
+      $("#BTN_SAVE").attr('disabled', true)
+      $("#BTN_BATAL").attr('disabled', true)
+
+  <?php } ?>
 
   var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
   $('#startDate').datepicker({
@@ -186,14 +202,19 @@
 
     $("#BTN_NEW").click(function(){
       event.preventDefault();
-      location.reload()
-      // data_not_in="'XYZ'";
-      // BUTTON_ACTION(true)
-      // CONTROL_NEW(false)
-      // $("#BTN_SAVE").attr('disabled', false)
-      // $("#BTN_BATAL").attr('disabled', false)
+      window.location.href = '<?php echo site_url('Peminjaman/addData') ?>';
 
-      // $("[name='id_peminjaman']").val('<New>')
+    })
+
+    $("#BTN_EDIT").click(function(){
+      event.preventDefault();
+      save_method='edit'
+      CONTROL_NEW(false)
+      BUTTON_ACTION(true)
+      
+      $("#BTN_SAVE").attr('disabled', false)
+      $("#BTN_BATAL").attr('disabled', false)
+      <?php if($this->session->userdata('hak_akses') == "laboran" ) echo "$(\"[name='qty_approved[]']\").attr('readonly', false)" ?>
     })
 
     $("#ADD_ITEM").click(function(){
@@ -362,7 +383,7 @@
   }
 
   function REFRESH_DATA(id){
-    var arr = [];var noRow=0;
+    var arr = [];var noRow=0;var rowData = '';
       $("#tb_data tbody tr").remove();
       $.ajax({
           url : "<?php echo site_url('Peminjaman/getDataHdr') ?>",
@@ -381,40 +402,63 @@
               $("[name='keterangan']").val(data[0]['keterangan']);
               $("[name='id_laborat']").val(data[0]['id_laborat']);
               $("[name='nm_laborat']").val(data[0]['nm_laborat']);
-              // if (data[0]['STATUS']=="662") {
-              //   $("#RELEASE").attr('disabled',false);
-              // }else{
-              //   $("#RELEASE").attr('disabled',true);
-              // }
+              if (data[0]['status']=="Proses") {
+                $("#BTN_APPROVE").attr('disabled',false);
+                $("#BTN_NOT_APPROVE").attr('disabled',false);
+              }else{
+                $("#BTN_APPROVE").attr('disabled',true);
+                $("#BTN_NOT_APPROVE").attr('disabled',true);
+                $("#BTN_EDIT").attr('disabled',true);
+                $("#BTN_DELETE").attr('disabled',true);
+              }
           }
       });
 
       $.ajax({
-          url : "<?php echo site_url('Peminjaman/getDataDtl') ?>",
+          url : "<?php echo site_url('Peminjaman/getDataItems') ?>",
           type: "POST",
+          dataType: "JSON",
           data: {
             id_peminjaman: id
           },
           success: function(data){
-            console.log(data);
-              // datane = $.parseJSON(data);
-              // data = datane['data'];
-              // $.each(data, function(index,array){
-              //   noRow = index+1;
-              //   var data_TR_ITEM = {'noRow':noRow,'MIN_ITEM_SRL':array['MIN_ITEM_SRL'],'PARTNO' : array['PARTNO_REQUESTED'],'DRG_NDX' : array['DRG_NDX'],'PART_DESC' : array['PART_DESC'],'STOCK_UOM' : array['STOCK_UOM'],'QTY_REQUESTED' : array['QTY_REQUESTED'],'RMKS' : array['RMKS'],'STOCK_ON_HAND' : array['STOCK_ON_HAND']};
-              //   arr.push(data_TR_ITEM);
-              // });
+            
+              $.each(data, function(index, value){
+                
+                noRow = index+1;
+                rowData += '<tr>'+
+                        '<td style="text-align:center;"><button class="btn btn-sm btn-danger delRow"><i class="bi bi-x-square"></i></button></td>'+
+                        '<td><input type="text" class="form-control" name="id_barang[]" value="'+value['id_barang']+'" readonly required></td>'+
+                        '<td style="text-align:center;"><button class="btn btn-sm btn-outline-secondary showItem" ><i class="bi bi-list-task"></i></button></td>'+
+                        '<td>'+value['nama_barang']+'</td>'+
+                        '<td><input type="text" class="form-control cekQty" name="qty_pinjam[]" value="'+value['qty_pinjam']+'" onkeypress="return onlyNumberKey(event)" required ></td>'+
+                        '<td><input type="text" class="form-control" name="qty_approved[]" value="'+value['qty_approved']+'" readonly required ></td>'+
+                        '<td>'+value['stock_tersedia']+'</td>'+
+                    '</tr>';
+                
+              });
 
-              // tampil_dataMR_ITEM(arr);
-              // $("[name='QTY_REQ[]']").attr('readonly',true);
-              // $("#btn_del_item").attr('disabled',true);
-              // $("[name='BTN_ITEM_NO[]']").attr('disabled',true);
-              // $("[name='BTN_CHIPS_LINE[]']").attr('disabled',true);
-              // $("[name='REMARK[]']").attr('readonly',true);
-              // $("[name='CHIPS_LINE[]']").attr('readonly',true);
+              $("#tb_data tbody").html(rowData);
+              CONTROL_NEW(true)
           }
       });
   }
 
+  $("#BTN_APPROVE").click(function(){
+    if(!confirm('Approve this document?')) return
+
+      urlPost = "<?php echo site_url('Peminjaman/approve') ?>";
+      formData = "id_peminjaman="+id
+      ACTION(urlPost, formData)
+  })
+
+  $("#BTN_APPROVE").click(function(){
+    if(!confirm('Not Approve this document?')) return
+
+      urlPost = "<?php echo site_url('Peminjaman/notApprove') ?>";
+      formData = "id_peminjaman="+id
+      ACTION(urlPost, formData)
+  })
+  // $("#BTN_NOT_APPROVE").attr('disabled',false);
 
 </script>

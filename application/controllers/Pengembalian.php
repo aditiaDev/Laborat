@@ -21,6 +21,8 @@ class Pengembalian extends CI_Controller {
   public function getAllData(){
     $data['data'] = $this->db->query("SELECT a.id_peminjaman, DATE_FORMAT(a.tgl_pengajuan, '%d-%b-%Y') tgl_pengajuan, 
     concat(DATE_FORMAT(a.pinjam_mulai, '%d-%b-%Y'), ' - ', DATE_FORMAT(a.pinjam_sampai, '%d-%b-%Y')) tgl_peminjaman , a.keterangan,
+    DATE_FORMAT(a.pinjam_mulai, '%d-%b-%Y') pinjam_mulai,
+    DATE_FORMAT(a.pinjam_sampai, '%d-%b-%Y') pinjam_sampai,
     a.status, a.no_induk, b.hak_akses, b.nama, b.no_wa, c.periode
     FROM tb_peminjaman a, tb_user b, tb_periode c
     where a.no_induk=b.no_induk

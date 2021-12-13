@@ -367,6 +367,7 @@
         success: function(data){
           console.log(data)
           if (data.status == "success") {
+            REFRESH_DATA(data.DOC_NO)
             toastr.info(data.message)
             $("[name='id_peminjaman']").val(data.DOC_NO)
 
@@ -375,6 +376,8 @@
             BUTTON_ACTION(false)
             $("#BTN_SAVE").attr('disabled', true)
             $("#BTN_BATAL").attr('disabled', true)
+
+            
           }else{
             toastr.error(data.message)
           }
@@ -446,17 +449,18 @@
 
   $("#BTN_APPROVE").click(function(){
     if(!confirm('Approve this document?')) return
-
+      var id_peminjaman = $("[name='id_peminjaman']").val()
       urlPost = "<?php echo site_url('Peminjaman/approve') ?>";
-      formData = "id_peminjaman="+id
+      formData = "id_peminjaman="+id_peminjaman
       ACTION(urlPost, formData)
+      
   })
 
-  $("#BTN_APPROVE").click(function(){
+  $("#BTN_NOT_APPROVE").click(function(){
     if(!confirm('Not Approve this document?')) return
 
       urlPost = "<?php echo site_url('Peminjaman/notApprove') ?>";
-      formData = "id_peminjaman="+id
+      formData = "id_peminjaman="+$("[name='id_peminjaman']").val()
       ACTION(urlPost, formData)
   })
   // $("#BTN_NOT_APPROVE").attr('disabled',false);

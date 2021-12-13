@@ -208,4 +208,32 @@ class Peminjaman extends CI_Controller {
     echo json_encode($output);
   }
 
+  public function approve(){
+    $id_peminjaman = $this->input->post('id_peminjaman');
+    $this->db->set('status', 'Approved');
+    $this->db->where('id_peminjaman', $id_peminjaman);
+    $this->db->update('tb_peminjaman');
+
+    $this->db->set('status', 'Approved');
+    $this->db->where('id_peminjaman', $id_peminjaman);
+    $this->db->update('tb_dtl_peminjaman');
+
+    $output = array("status" => "success", "message" => "Document berhasil di Approve", "DOC_NO" => $id_peminjaman);
+    echo json_encode($output);
+  }
+
+  public function notApprove(){
+    $id_peminjaman = $this->input->post('id_peminjaman');
+    $this->db->set('status', 'Not Approved');
+    $this->db->where('id_peminjaman', $id_peminjaman);
+    $this->db->update('tb_peminjaman');
+
+    $this->db->set('status', 'Not Approved');
+    $this->db->where('id_peminjaman', $id_peminjaman);
+    $this->db->update('tb_dtl_peminjaman');
+
+    $output = array("status" => "success", "message" => "Document tidak terapprove", "DOC_NO" => $id_peminjaman);
+    echo json_encode($output);
+  }
+
 }

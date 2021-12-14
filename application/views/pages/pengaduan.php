@@ -1,4 +1,3 @@
-
 <main id="main" class="main" style="/*margin-left: 250px;padding: 10px 20px;*/">
 
   <section class="section">
@@ -13,31 +12,25 @@
                 <div class="col-lg-12">
                   <table class="table tb_no_top">
                     <tr>
-                        <td style="width: 110px;">ID Transaksi</td>
-                        <td><input type="text" class="form-control" name="id_peminjaman" value="<New>" readonly></td>
+                        <td style="width: 110px;">No Aduan</td>
+                        <td><input type="text" class="form-control" name="id_pengaduan" value="<New>" readonly></td>
                         <td>Tanggal</td>
-                        <td><input type="text" class="form-control datepicker" name="tgl_pengajuan" readonly value="<?php echo date('d-M-Y'); ?>"></td>
+                        <td><input type="text" class="form-control" name="tgl_pengaduan" readonly value="<?php echo date('d-M-Y'); ?>"></td>
                         <td>Dibuat</td>
                         <td><input type="text" class="form-control" name="no_induk" value="<?php echo $this->session->userdata('no_induk') ?>" readonly></td>
                         <td><input type="text" class="form-control" name="nama" value="<?php echo $this->session->userdata('nama') ?>" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>Pinjam</td>
-                        <td><input type="text" class="form-control" name="pinjam_mulai" id="startDate" readonly></td>
-                        <td>Sampai</td>
-                        <td><input type="text" class="form-control" name="pinjam_sampai" id="endDate" readonly></td>
-                        <td>Status</td>
-                        <td><input type="text" class="form-control" name="status" value="Proses" readonly></td>
                     </tr>
                     <tr>
                       <td>Laborat</td>
                       <td><input type="text" class="form-control" name="id_laborat" readonly></td>
                       <td><button class="btn btn-outline-secondary" id="BTN_LAB"><i class="bi bi-list-task"></i></button></td>
                       <td colspan="2"><input type="text" class="form-control" name="nm_laborat" readonly></td>
+                      <td style="text-align: right;">Status</td>
+                      <td><input type="text" class="form-control" name="status" value="Proses" readonly></td>
                     </tr>
                     <tr>
                       <td>Keterangan</td>
-                      <td colspan="3">
+                      <td colspan="4">
                         <textarea name="keterangan" class="form-control"></textarea>
                       </td>
                     </tr>
@@ -53,15 +46,15 @@
                 <?php } ?>
                 <div class="col-lg-12">
                   <div style="position: relative;height: 400px;overflow: auto;display: block;">
-                    <table class="tabel" id="tb_data" style="/*width:1000px;*/font-size: 12px;">
+                    <table class="tabel" id="tb_data" style="width:1000px;font-size: 12px;">
                       <thead>
-                        <th style="width: 60px;"><button class="btn btn-sm btn-light" id="ADD_ITEM"><i class="bi bi-plus-square"></i></button></th>
+                        <th style="width: 60px;"><button type="button" class="btn btn-sm btn-light" id="ADD_ITEM"><i class="bi bi-plus-square"></i></button></th>
                         <th style="width: 170px;">Item No</th>
                         <th style="width: 60px;"></th>
-                        <th style="width: 300px;">Description</th>
-                        <th style="width: 170px;">Jml Pinjam</th>
-                        <th>Jml di Setujui</th>
-                        <th>Stock Tersedia</th>
+                        <th style="width: 250px;">Description</th>
+                        <th style="width: 140px;">Jml Rusak</th>
+                        <th style="width: 140px;">Jml Rusak Approved</th>
+                        <th>Remark</th>
                       </thead>
                       <tbody >
                           
@@ -163,76 +156,21 @@
 
   <?php } ?>
 
-  var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-  $('#startDate').datepicker({
-      uiLibrary: 'bootstrap4',
-      iconsLibrary: 'bootstrapicons',
-      showOnFocus: true, showRightIcon: false,
-      minDate: today,
-      format: 'dd-mmm-yyyy',
-      maxDate: function () {
-          return $('#endDate').val();
-      }
-  });
-  $('#endDate').datepicker({
-      uiLibrary: 'bootstrap4',
-      iconsLibrary: 'bootstrapicons',
-      showOnFocus: true, showRightIcon: false,
-      format: 'dd-mmm-yyyy',
-      minDate: function () {
-          return $('#startDate').val();
-      }
-  });
-
   function CONTROL_NEW(param){
 
     $("#BTN_LAB").attr('disabled',param)
     $("#ADD_ITEM").attr('disabled',param)
     $(".delRow").attr('disabled',param)
 
-    $("[name='pinjam_mulai']").attr('disabled',param)
-    $("[name='pinjam_sampai']").attr('disabled',param)
     $("[name='keterangan']").attr('disabled',param)
     $(".showItem").attr('disabled', param)
-    $(".cekQty").attr('disabled', param)
+    $("[name='qty_rusak[]']").attr('readonly', param)
+    $("[name='ket_rusak[]']").attr('readonly', param)
   }
 
-  $(function(){
-
-    $("#BTN_NEW").click(function(){
-      event.preventDefault();
-      window.location.href = '<?php echo site_url('Peminjaman/addData') ?>';
-
-    })
-
-    $("#BTN_EDIT").click(function(){
-      event.preventDefault();
-      save_method='edit'
-      CONTROL_NEW(false)
-      BUTTON_ACTION(true)
-      
-      $("#BTN_SAVE").attr('disabled', false)
-      $("#BTN_BATAL").attr('disabled', false)
-      <?php if($this->session->userdata('hak_akses') == "laboran" ) echo "$(\"[name='qty_approved[]']\").attr('readonly', false)" ?>
-    })
-
-    $("#ADD_ITEM").click(function(){
-      event.preventDefault();
-      if($("[name='id_laborat']").val() == ""){
-        alert('Pilih Laborat terlebih dahulu')
-        return
-      }
-      row = '<tr>'+
-                '<td style="text-align:center;"><button class="btn btn-sm btn-danger delRow"><i class="bi bi-x-square"></i></button></td>'+
-                '<td><input type="text" class="form-control" name="id_barang[]" readonly required></td>'+
-                '<td style="text-align:center;"><button class="btn btn-sm btn-outline-secondary showItem" ><i class="bi bi-list-task"></i></button></td>'+
-                '<td></td>'+
-                '<td><input type="text" class="form-control cekQty" name="qty_pinjam[]" onkeypress="return onlyNumberKey(event)" required ></td>'+
-                '<td><input type="text" class="form-control" name="qty_approved[]" readonly required ></td>'+
-                '<td></td>'+
-            '</tr>';
-      $("#tb_data tbody").append(row);
-    })
+  $("#BTN_NEW").click(function(){
+    event.preventDefault();
+    window.location.href = '<?php echo site_url('Pengaduan/addData') ?>';
 
   })
 
@@ -322,18 +260,23 @@
       $('#modal_barang').modal('hide');
   });
 
-  $("#tb_data").on("change", "tbody tr .cekQty", function() {
-    indexRow = $(this).closest('td').parent()[0].sectionRowIndex
-    var jmlReq = $("[name='qty_pinjam[]']").eq(indexRow).val();
-    var stokTersedia = $("#tb_data tbody tr:eq("+indexRow+") td:eq(6)").text()
-
-    if(parseFloat(jmlReq) > parseFloat(stokTersedia)){
-      alert("Jumlah Pinjam tidak dapat lebih dari stock tersedia")
-      $("[name='qty_pinjam[]']").eq(indexRow).val(stokTersedia)
+  $("#ADD_ITEM").click(function(){
+    event.preventDefault();
+    if($("[name='id_laborat']").val() == ""){
+      alert('Pilih Laborat terlebih dahulu')
       return
     }
-    
-  });
+    row = '<tr>'+
+              '<td style="text-align:center;"><button type="button" class="btn btn-sm btn-danger delRow"><i class="bi bi-x-square"></i></button></td>'+
+              '<td><input type="text" class="form-control" name="id_barang[]" readonly required></td>'+
+              '<td style="text-align:center;"><button class="btn btn-sm btn-outline-secondary showItem" ><i class="bi bi-list-task"></i></button></td>'+
+              '<td></td>'+
+              '<td><input type="text" class="form-control" name="qty_rusak[]" onkeypress="return onlyNumberKey(event)" required ></td>'+
+              '<td><input type="text" class="form-control" name="qty_rusak_approved[]" readonly required ></td>'+
+              '<td><input type="text" class="form-control" name="ket_rusak[]"  ></td>'+
+          '</tr>';
+    $("#tb_data tbody").append(row);
+  })
 
   $("#tb_data").on("click", "tbody tr .delRow", function() {
     event.preventDefault();
@@ -348,10 +291,10 @@
     var formData = $("#FRM_DATA").serialize();
     
     if(save_method == 'save') {
-        urlPost = "<?php echo site_url('Peminjaman/saveData') ?>";
+        urlPost = "<?php echo site_url('Pengaduan/saveData') ?>";
     }else{
-        urlPost = "<?php echo site_url('Peminjaman/updateData') ?>";
-        formData+="&id_peminjaman="+id_data
+        urlPost = "<?php echo site_url('Pengaduan/updateData') ?>";
+        formData+="&id_pengaduan="+id_data
     }
     // console.log(formData)
     ACTION(urlPost, formData)
@@ -366,9 +309,9 @@
         success: function(data){
           console.log(data)
           if (data.status == "success") {
-            REFRESH_DATA(data.DOC_NO)
+            // REFRESH_DATA(data.DOC_NO)
             toastr.info(data.message)
-            $("[name='id_peminjaman']").val(data.DOC_NO)
+            $("[name='id_pengaduan']").val(data.DOC_NO)
 
             CONTROL_NEW(true)
 
@@ -388,18 +331,16 @@
     var arr = [];var noRow=0;var rowData = '';
       $("#tb_data tbody tr").remove();
       $.ajax({
-          url : "<?php echo site_url('Peminjaman/getDataHdr') ?>",
+          url : "<?php echo site_url('Pengaduan/getDataHdr') ?>",
           type: "POST",
           dataType: "JSON",
-          data: {id_peminjaman: id},
+          data: {id_pengaduan: id},
           success: function(data){
               console.log(data);
-              $("[name='id_peminjaman']").val(data[0]['id_peminjaman']);
-              $("[name='tgl_pengajuan']").val(data[0]['tgl_pengajuan']);
+              $("[name='id_pengaduan']").val(data[0]['id_pengaduan']);
+              $("[name='tgl_pengaduan']").val(data[0]['tgl_pengaduan']);
               $("[name='no_induk']").val(data[0]['no_induk']);
               $("[name='nama']").val(data[0]['nama']);
-              $("[name='pinjam_mulai']").val(data[0]['pinjam_mulai']);
-              $("[name='pinjam_sampai']").val(data[0]['pinjam_sampai']);
               $("[name='status']").val(data[0]['status']);
               $("[name='keterangan']").val(data[0]['keterangan']);
               $("[name='id_laborat']").val(data[0]['id_laborat']);
@@ -417,11 +358,11 @@
       });
 
       $.ajax({
-          url : "<?php echo site_url('Peminjaman/getDataItems') ?>",
+          url : "<?php echo site_url('Pengaduan/getDataItems') ?>",
           type: "POST",
           dataType: "JSON",
           data: {
-            id_peminjaman: id
+            id_pengaduan: id
           },
           success: function(data){
             
@@ -429,14 +370,14 @@
                 
                 noRow = index+1;
                 rowData += '<tr>'+
-                        '<td style="text-align:center;"><button class="btn btn-sm btn-danger delRow"><i class="bi bi-x-square"></i></button></td>'+
-                        '<td><input type="text" class="form-control" name="id_barang[]" value="'+value['id_barang']+'" readonly required></td>'+
-                        '<td style="text-align:center;"><button class="btn btn-sm btn-outline-secondary showItem" ><i class="bi bi-list-task"></i></button></td>'+
-                        '<td>'+value['nama_barang']+'</td>'+
-                        '<td><input type="text" class="form-control cekQty" name="qty_pinjam[]" value="'+value['qty_pinjam']+'" onkeypress="return onlyNumberKey(event)" required ></td>'+
-                        '<td><input type="text" class="form-control" name="qty_approved[]" value="'+value['qty_approved']+'" readonly required ></td>'+
-                        '<td>'+value['stock_tersedia']+'</td>'+
-                    '</tr>';
+                              '<td style="text-align:center;"><button type="button" class="btn btn-sm btn-danger delRow"><i class="bi bi-x-square"></i></button></td>'+
+                              '<td><input type="text" class="form-control" name="id_barang[]" value="'+value['id_barang']+'" readonly required></td>'+
+                              '<td style="text-align:center;"><button class="btn btn-sm btn-outline-secondary showItem" ><i class="bi bi-list-task"></i></button></td>'+
+                              '<td>'+value['nama_barang']+'</td>'+
+                              '<td><input type="text" class="form-control" name="qty_rusak[]" value="'+value['qty_rusak']+'" onkeypress="return onlyNumberKey(event)" required ></td>'+
+                              '<td><input type="text" class="form-control" name="qty_rusak_approved[]" value="'+value['qty_rusak_approved']+'" readonly required ></td>'+
+                              '<td><input type="text" class="form-control" name="ket_rusak[]"  value="'+value['ket_rusak']+'" ></td>'+
+                          '</tr>';
                 
               });
 
@@ -445,23 +386,5 @@
           }
       });
   }
-
-  $("#BTN_APPROVE").click(function(){
-    if(!confirm('Approve this document?')) return
-      var id_peminjaman = $("[name='id_peminjaman']").val()
-      urlPost = "<?php echo site_url('Peminjaman/approve') ?>";
-      formData = "id_peminjaman="+id_peminjaman
-      ACTION(urlPost, formData)
-      
-  })
-
-  $("#BTN_NOT_APPROVE").click(function(){
-    if(!confirm('Not Approve this document?')) return
-
-      urlPost = "<?php echo site_url('Peminjaman/notApprove') ?>";
-      formData = "id_peminjaman="+$("[name='id_peminjaman']").val()
-      ACTION(urlPost, formData)
-  })
-  // $("#BTN_NOT_APPROVE").attr('disabled',false);
 
 </script>

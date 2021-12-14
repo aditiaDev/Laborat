@@ -107,7 +107,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="BTN_SAVE">Save changes</button>
+                <button type="button" class="btn btn-primary" id="BTN_SAVE">Submit</button>
               </div>
             </form>
           </div>
@@ -182,7 +182,6 @@
               { "data": "status"},
               { "data": null, 
                 "render" : function(data){
-                  // console.log(data)
                   if(data.status == "Approved"){
                     return "<button class='btn btn-sm btn-warning BTN_KEMBALI' title='Pengembalian'>Kembali</button>"
                   }else{
@@ -224,7 +223,6 @@
 
     $("#tb_data tbody").on("click", ".BTN_KEMBALI", function() {
       event.preventDefault();
-      // var Rowdata = tb_data.row( this ).data();
       var data = tb_data.row( $(this).parents('tr') ).data();
       console.log(data)
       $("[name='id_peminjaman']").val(data.id_peminjaman)
@@ -234,6 +232,35 @@
       $("[name='pinjam_sampai']").val(data.pinjam_sampai)
 
       $("#modal_kembali").modal('show')
+    })
+
+    function ACTION(urlPost, formData){
+      $.ajax({
+          url: urlPost,
+          type: "POST",
+          data: formData,
+          dataType: "JSON",
+          success: function(data){
+            console.log(data)
+            if (data.status == "success") {
+              toastr.info(data.message)
+              REFRESH_DATA()
+
+            }else{
+              toastr.error(data.message)
+            }
+          }
+      })
+    }
+
+    $("#BTN_SAVE").click(function(){
+      event.preventDefault();
+      var formData = $("#FRM_DATA").serialize();
+      
+      urlPost = "<?php echo site_url('Peminjaman/pengembalian') ?>";
+  
+      ACTION(urlPost, formData)
+      $("#modal_kembali").modal('hide')
     })
 
   </script>

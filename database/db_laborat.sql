@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.2
+-- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 12 Des 2021 pada 16.17
--- Versi server: 10.4.10-MariaDB
--- Versi PHP: 7.3.12
+-- Waktu pembuatan: 14 Des 2021 pada 09.33
+-- Versi server: 10.4.13-MariaDB
+-- Versi PHP: 7.3.19
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -100,9 +99,8 @@ CREATE TABLE `tb_dtl_peminjaman` (
 INSERT INTO `tb_dtl_peminjaman` (`id_dtl_peminjaman`, `id_barang`, `qty_pinjam`, `qty_approved`, `status`, `id_peminjaman`) VALUES
 (1, 'LKM01KM0001', 2, 0, 'Proses', 'PJ2021120001'),
 (2, 'LKM01KM0001', 2, 2, 'Proses', 'PJ2021120002'),
-(3, 'LKM01KM0001', 2, 2, 'Proses', 'PJ2021120003'),
-(4, 'LKM01KM0001', 1, 1, 'Proses', 'PJ2021120003'),
-(5, 'LKM01KM0001', 2, 2, 'Proses', 'PJ2021120004'),
+(3, 'LKM01KM0001', 2, 2, 'Selesai', 'PJ2021120003'),
+(4, 'LKM01KM0001', 1, 1, 'Selesai', 'PJ2021120003'),
 (6, 'LKM01KM0001', 2, 2, 'Proses', 'PJ2021120005');
 
 -- --------------------------------------------------------
@@ -132,9 +130,17 @@ CREATE TABLE `tb_dtl_pengaduan` (
   `id_dtl_pengaduan` int(11) NOT NULL,
   `id_barang` varchar(20) DEFAULT NULL,
   `qty_rusak` int(11) DEFAULT NULL,
+  `qty_rusak_approved` int(11) DEFAULT NULL,
   `ket_rusak` text DEFAULT NULL,
   `id_pengaduan` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `tb_dtl_pengaduan`
+--
+
+INSERT INTO `tb_dtl_pengaduan` (`id_dtl_pengaduan`, `id_barang`, `qty_rusak`, `qty_rusak_approved`, `ket_rusak`, `id_pengaduan`) VALUES
+(1, 'LKM01KM0001', 1, 1, 'rusak kacanya', 'AD2021120003');
 
 -- --------------------------------------------------------
 
@@ -215,8 +221,7 @@ CREATE TABLE `tb_peminjaman` (
 INSERT INTO `tb_peminjaman` (`id_peminjaman`, `tgl_pengajuan`, `pinjam_mulai`, `pinjam_sampai`, `tgl_kembali`, `denda_keterlambatan`, `ket_kembali`, `keterangan`, `status`, `no_induk`, `id_periode`) VALUES
 ('PJ2021120001', '2021-12-12', '2021-12-13', '2021-12-14', NULL, NULL, NULL, '', 'Proses', '0012345678', 2),
 ('PJ2021120002', '2021-12-12', '2021-12-12', '2021-12-13', NULL, NULL, NULL, 'test', 'Selesai', '0012345678', 2),
-('PJ2021120003', '2021-12-12', '2021-12-12', '2021-12-14', NULL, NULL, NULL, 'dsdsf', 'Proses', '0012345678', 2),
-('PJ2021120004', '2021-12-12', '2021-12-12', '2021-12-14', NULL, NULL, NULL, 'test', 'Proses', '0012345678', 2),
+('PJ2021120003', '2021-12-12', '2021-12-12', '2021-12-14', '2021-12-14', 0, 'test1', 'dsdsf', 'Selesai', '0012345678', 2),
 ('PJ2021120005', '2021-12-12', '2021-12-14', '2021-12-15', NULL, NULL, NULL, 'asds', 'Proses', '0012345678', 2);
 
 -- --------------------------------------------------------
@@ -256,10 +261,19 @@ CREATE TABLE `tb_pengaduan` (
   `id_pengaduan` varchar(20) NOT NULL,
   `tgl_pengaduan` date DEFAULT NULL,
   `keterangan` text DEFAULT NULL,
-  `status` enum('proses','approved','not approved') DEFAULT NULL,
+  `status` enum('Proses','Approved','Not Approved') DEFAULT NULL,
   `no_induk` varchar(30) DEFAULT NULL,
   `id_periode` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `tb_pengaduan`
+--
+
+INSERT INTO `tb_pengaduan` (`id_pengaduan`, `tgl_pengaduan`, `keterangan`, `status`, `no_induk`, `id_periode`) VALUES
+('AD2021120001', '2021-12-14', 'TEST KETER', 'Proses', '0012345678', 2),
+('AD2021120002', '2021-12-14', NULL, 'Approved', '0012345678', 2),
+('AD2021120003', '2021-12-14', 'test', 'Proses', '1234353', 2);
 
 -- --------------------------------------------------------
 
@@ -281,6 +295,22 @@ INSERT INTO `tb_periode` (`id_periode`, `periode`, `status`) VALUES
 (1, '2020-2021', 'Tidak Aktif'),
 (2, '2021-2022', 'Aktif'),
 (3, '2022-2023', 'Tidak Aktif');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `tb_transaksi`
+--
+
+CREATE TABLE `tb_transaksi` (
+  `tanggal_entry` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `id_laborat` varchar(20) DEFAULT NULL,
+  `id_barang` varchar(20) DEFAULT NULL,
+  `prev_qty` int(11) DEFAULT NULL,
+  `tran_qty` int(11) DEFAULT NULL,
+  `balance_qty` int(11) DEFAULT NULL,
+  `harga_satuan` float DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -307,9 +337,10 @@ CREATE TABLE `tb_user` (
 
 INSERT INTO `tb_user` (`no_induk`, `nama`, `alamat`, `no_telp`, `no_wa`, `jekel`, `username`, `password`, `hak_akses`, `status`) VALUES
 ('0012345678', 'Rifky Febian', 'Jln. Kartini no 2, Jepara', '085643520576', '085643520576', 'Laki-laki', 'siswa', 'siswa', 'siswa', 'Aktif'),
-('1234353', 'TEST edit', 'Alamat edit', '085446546542', '085446546543', 'Perempuan', 'TESTedit', '123456edit', 'siswa', 'Aktif'),
+('1234353', 'TEST edit', 'Alamat edit', '085446546542', '085446546543', 'Perempuan', 'TESTedit', '123456edit', 'guru', 'Aktif'),
 ('2100123456', 'Chandra Asih', 'Jln. Pemuda no 23, Semarang', '08512376871', '08512376871', 'Perempuan', 'sarpras', 'sarpras', 'sarpras', 'Tidak Aktif'),
-('2111123456', 'Subejo, M.H', 'Jln. Merpati no 12, Pati', '0813247688112', '0813247688112', 'Laki-laki', 'kepsek', 'kepsek', 'kepsek', 'Aktif');
+('2111123456', 'Subejo, M.H', 'Jln. Merpati no 12, Pati', '0813247688112', '0813247688112', 'Laki-laki', 'kepsek', 'kepsek', 'kepsek', 'Aktif'),
+('2111123457', 'Tresna, M.H', 'Jln. Merpati no 12, Pati', '0813247688113', '0813247688113', 'Laki-laki', 'laboran', 'laboran', 'laboran', 'Aktif');
 
 --
 -- Indexes for dumped tables
@@ -457,7 +488,7 @@ ALTER TABLE `tb_dtl_pengadaan`
 -- AUTO_INCREMENT untuk tabel `tb_dtl_pengaduan`
 --
 ALTER TABLE `tb_dtl_pengaduan`
-  MODIFY `id_dtl_pengaduan` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_dtl_pengaduan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `tb_pendaftaran`

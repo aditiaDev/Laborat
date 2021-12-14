@@ -236,4 +236,41 @@ class Peminjaman extends CI_Controller {
     echo json_encode($output);
   }
 
+  public function pengembalian(){
+
+    $this->load->library('form_validation');
+    $this->form_validation->set_rules('id_peminjaman', 'id_peminjaman', 'required');
+    $this->form_validation->set_rules('tgl_kembali', 'Tanggal Kembali', 'required');
+
+    if($this->form_validation->run() == FALSE){
+      // echo validation_errors();
+      $output = array("status" => "error", "message" => validation_errors());
+      echo json_encode($output);
+      return false;
+    }
+
+    $data = array(
+        "tgl_kembali" => date("Y-m-d", strtotime($this->input->post('tgl_kembali'))),
+        "denda_keterlambatan" => $this->input->post('denda_keterlambatan'),
+        "ket_kembali" => $this->input->post('ket_kembali'),
+        "status" => "Selesai",
+    );
+    $this->db->where('id_peminjaman', $this->input->post('id_peminjaman'));
+    $this->db->update('tb_peminjaman', $data);
+
+    $dataItems = array(
+        "status" => "Selesai",
+    );
+    $this->db->where('id_peminjaman', $this->input->post('id_peminjaman'));
+    $this->db->update('tb_dtl_peminjaman', $dataItems);
+
+    if($this->db->error()['message'] != ""){
+      $output = array("status" => "error", "message" => $this->db->error()['message']);
+      echo json_encode($output);
+      return false;
+    }
+    $output = array("status" => "success", "message" => "Data Berhasil di Update");
+    echo json_encode($output);
+  }
+
 }

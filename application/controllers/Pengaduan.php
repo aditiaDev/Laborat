@@ -91,6 +91,45 @@ class Pengaduan extends CI_Controller {
 
   }
 
+  public function updateData(){
+
+    $this->load->library('form_validation');
+    $this->form_validation->set_rules('id_pengaduan', 'No Aduan', 'required');
+    $this->form_validation->set_rules('tgl_pengaduan', 'Tanggal Pengaduan', 'required');
+    $this->form_validation->set_rules('no_induk', 'Nomor Induk User', 'required');
+
+    $this->form_validation->set_rules('id_barang[]', 'Barang', 'required');
+    $this->form_validation->set_rules('qty_rusak[]', 'Jml yang Rusak', 'required');
+    $this->form_validation->set_rules('qty_rusak_approved[]', 'Jml yang Rusak', 'required');
+
+    if($this->form_validation->run() == FALSE){
+      // echo validation_errors();
+      $output = array("status" => "error", "message" => validation_errors());
+      echo json_encode($output);
+      return false;
+    }
+
+    foreach($this->input->post('id_barang') as $key => $each){
+      $dataDtl = array(
+        "qty_rusak_approved" => $this->input->post('qty_rusak_approved')[$key],
+        "status" => $this->input->post('status')[$key],
+      );
+
+      $this->db->where('id_pengaduan', $this->input->post('id_pengaduan'));
+      $this->db->where('id_barang', $this->input->post('id_barang')[$key]);
+      $this->db->update('tb_dtl_pengaduan', $dataDtl);
+    }
+
+    if($this->db->error()['message'] != ""){
+      $output = array("status" => "error", "message" => $this->db->error()['message']);
+      echo json_encode($output);
+      return false;
+    }
+    $output = array("status" => "success", "message" => "Data Berhasil di Update", "DOC_NO" => $this->input->post('id_pengaduan'));
+    echo json_encode($output);
+
+  }
+
   public function dtlData($id){
 
     $data['id'] = $id;
@@ -125,7 +164,7 @@ class Pengaduan extends CI_Controller {
 
   public function getDataItems(){
     $id_pengaduan = $this->input->post('id_pengaduan');
-    $data = $this->db->query("SELECT a.id_barang, b.nama_barang, a.qty_rusak, a.qty_rusak_approved, a.ket_rusak 
+    $data = $this->db->query("SELECT a.id_barang, b.nama_barang, a.qty_rusak, a.qty_rusak_approved, a.ket_rusak, a.status 
     FROM tb_dtl_pengaduan a, tb_barang b
     where a.id_barang=b.id_barang
     and a.id_pengaduan='".$id_pengaduan."'")->result_array();

@@ -46,15 +46,16 @@
                 <?php } ?>
                 <div class="col-lg-12">
                   <div style="position: relative;height: 400px;overflow: auto;display: block;">
-                    <table class="tabel" id="tb_data" style="width:1000px;font-size: 12px;">
+                    <table class="tabel" id="tb_data" style="min-width:1200px;font-size: 12px;">
                       <thead>
                         <th style="width: 60px;"><button type="button" class="btn btn-sm btn-light" id="ADD_ITEM"><i class="bi bi-plus-square"></i></button></th>
                         <th style="width: 170px;">Item No</th>
                         <th style="width: 60px;"></th>
                         <th style="width: 250px;">Description</th>
-                        <th style="width: 140px;">Jml Rusak</th>
-                        <th style="width: 140px;">Jml Rusak Approved</th>
+                        <th style="width: 90px;">Jml Rusak</th>
+                        <th style="width: 90px;">Jml Rusak Approved</th>
                         <th>Remark</th>
+                        <?php if($this->session->userdata('hak_akses') == "laboran") echo "<th>Action</th>" ?>
                       </thead>
                       <tbody >
                           
@@ -166,12 +167,27 @@
     $(".showItem").attr('disabled', param)
     $("[name='qty_rusak[]']").attr('readonly', param)
     $("[name='ket_rusak[]']").attr('readonly', param)
+    $("[name='qty_rusak_approved[]']").attr('readonly', param)
+    $("[name='status[]']").attr('readonly', param)
   }
 
   $("#BTN_NEW").click(function(){
     event.preventDefault();
     window.location.href = '<?php echo site_url('Pengaduan/addData') ?>';
 
+  })
+
+  $("#BTN_EDIT").click(function(){
+    event.preventDefault();
+    save_method='edit';
+    id_data = $("[name='id_pengaduan']").val()
+    BUTTON_ACTION(true)
+
+    $("#BTN_SAVE").attr('disabled', false)
+    $("#BTN_BATAL").attr('disabled', false)
+    $("#BTN_APPROVE").attr('disabled', true)
+    $("#BTN_NOT_APPROVE").attr('disabled', true)
+    $("[name='qty_rusak_approved[]']").attr('readonly', false)
   })
 
   $("#BTN_LAB").on("click",function() {
@@ -252,7 +268,6 @@
       if (data_not_in.indexOf(Rowdata.id_barang) < 0) {
         $("[name='id_barang[]']").eq(indexRow).val(Rowdata.id_barang);
         $("#tb_data tbody tr:eq("+indexRow+") td:eq(3)").text(Rowdata.nama_barang);
-        $("#tb_data tbody tr:eq("+indexRow+") td:eq(6)").text(Rowdata.stock_tersedia)
       }else{
         alert("Item sudah ada di list");
         return;
@@ -272,7 +287,7 @@
               '<td style="text-align:center;"><button class="btn btn-sm btn-outline-secondary showItem" ><i class="bi bi-list-task"></i></button></td>'+
               '<td></td>'+
               '<td><input type="text" class="form-control" name="qty_rusak[]" onkeypress="return onlyNumberKey(event)" required ></td>'+
-              '<td><input type="text" class="form-control" name="qty_rusak_approved[]" readonly required ></td>'+
+              '<td><input type="text" class="form-control" name="qty_rusak_approved[]" onkeypress="return onlyNumberKey(event)" readonly required ></td>'+
               '<td><input type="text" class="form-control" name="ket_rusak[]"  ></td>'+
           '</tr>';
     $("#tb_data tbody").append(row);
@@ -309,7 +324,7 @@
         success: function(data){
           console.log(data)
           if (data.status == "success") {
-            // REFRESH_DATA(data.DOC_NO)
+            REFRESH_DATA(data.DOC_NO)
             toastr.info(data.message)
             $("[name='id_pengaduan']").val(data.DOC_NO)
 
@@ -369,22 +384,26 @@
               $.each(data, function(index, value){
                 
                 noRow = index+1;
-                rowData += '<tr>'+
+                rowData = '<tr>'+
                               '<td style="text-align:center;"><button type="button" class="btn btn-sm btn-danger delRow"><i class="bi bi-x-square"></i></button></td>'+
                               '<td><input type="text" class="form-control" name="id_barang[]" value="'+value['id_barang']+'" readonly required></td>'+
                               '<td style="text-align:center;"><button class="btn btn-sm btn-outline-secondary showItem" ><i class="bi bi-list-task"></i></button></td>'+
                               '<td>'+value['nama_barang']+'</td>'+
                               '<td><input type="text" class="form-control" name="qty_rusak[]" value="'+value['qty_rusak']+'" onkeypress="return onlyNumberKey(event)" required ></td>'+
-                              '<td><input type="text" class="form-control" name="qty_rusak_approved[]" value="'+value['qty_rusak_approved']+'" readonly required ></td>'+
+                              '<td><input type="text" class="form-control" name="qty_rusak_approved[]" value="'+value['qty_rusak_approved']+'"  onkeypress="return onlyNumberKey(event)" readonly required ></td>'+
                               '<td><input type="text" class="form-control" name="ket_rusak[]"  value="'+value['ket_rusak']+'" ></td>'+
+                              '<td><select class="form-select" name="status[]"><option value="Perbaiki">Perbaiki</option><option value="Buang">Buang</option></select></td>'+
                           '</tr>';
-                
+                          $("#tb_data tbody").append(rowData);
+                          $("[name='status[]']").eq(index).val(value['status'])
               });
 
-              $("#tb_data tbody").html(rowData);
+              
               CONTROL_NEW(true)
           }
       });
   }
+
+  
 
 </script>

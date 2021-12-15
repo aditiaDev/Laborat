@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 14 Des 2021 pada 23.59
+-- Waktu pembuatan: 15 Des 2021 pada 15.00
 -- Versi server: 10.4.10-MariaDB
 -- Versi PHP: 7.3.12
 
@@ -107,8 +107,8 @@ CREATE TABLE `tb_dtl_pengadaan` (
   `qty_pengajuan` int(11) DEFAULT NULL,
   `qty_approved` int(11) DEFAULT NULL,
   `harga` float DEFAULT NULL,
-  `status` enum('approved','not approved','proses') DEFAULT NULL,
-  `total_belanja` float NOT NULL,
+  `status` enum('Approved','Not Approved','Proses') DEFAULT NULL,
+  `total_belanja` float DEFAULT NULL,
   `id_pengadaan` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -133,7 +133,7 @@ CREATE TABLE `tb_dtl_pengaduan` (
 --
 
 INSERT INTO `tb_dtl_pengaduan` (`id_dtl_pengaduan`, `id_barang`, `qty_rusak`, `qty_rusak_approved`, `ket_rusak`, `status`, `id_pengaduan`) VALUES
-(1, 'LFS01FS0002', 1, 1, 'Planet merkurius lepas dari penyangga', 'Perbaiki', 'AD2021120001'),
+(1, 'LFS01FS0002', 1, 1, 'Planet merkurius lepas dari penyangga', 'Buang', 'AD2021120001'),
 (2, 'LFS01FS0001', 2, 2, 'Perlu kalibrasi ulang', 'Buang', 'AD2021120001');
 
 -- --------------------------------------------------------
@@ -229,12 +229,19 @@ CREATE TABLE `tb_pendaftaran` (
 
 CREATE TABLE `tb_pengadaan` (
   `id_pengadaan` varchar(20) NOT NULL,
-  `tgl_pengajuan` datetime DEFAULT NULL,
-  `status` enum('process','approved sarpras','not approved sarpras','approved kepsek','not approved kepsek','selesai') DEFAULT NULL,
+  `tgl_pengajuan` date DEFAULT NULL,
+  `status` enum('Process','Approved sarpras','Not Approved sarpras','Approved kepsek','Not Approved kepsek','Selesai') DEFAULT NULL,
   `keterangan` text DEFAULT NULL,
   `no_induk` varchar(30) DEFAULT NULL,
   `id_periode` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `tb_pengadaan`
+--
+
+INSERT INTO `tb_pengadaan` (`id_pengadaan`, `tgl_pengajuan`, `status`, `keterangan`, `no_induk`, `id_periode`) VALUES
+('1', '2021-12-15', 'Process', 'test', '0012345678', 3);
 
 -- --------------------------------------------------------
 
@@ -256,7 +263,7 @@ CREATE TABLE `tb_pengaduan` (
 --
 
 INSERT INTO `tb_pengaduan` (`id_pengaduan`, `tgl_pengaduan`, `keterangan`, `status`, `no_induk`, `id_periode`) VALUES
-('AD2021120001', '2021-12-14', '', 'Proses', '0012345678', 2);
+('AD2021120001', '2021-12-14', '', 'Not Approved', '0012345678', 2);
 
 -- --------------------------------------------------------
 
@@ -287,6 +294,7 @@ INSERT INTO `tb_periode` (`id_periode`, `periode`, `status`) VALUES
 
 CREATE TABLE `tb_transaksi` (
   `tanggal_entry` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `id_transaksi` varchar(30) DEFAULT NULL,
   `id_laborat` varchar(20) DEFAULT NULL,
   `id_barang` varchar(20) DEFAULT NULL,
   `prev_qty` int(11) DEFAULT NULL,

@@ -172,4 +172,68 @@ class Pengaduan extends CI_Controller {
     echo json_encode($data);
   }
 
+  public function approve(){
+    $id_pengaduan = $this->input->post('id_pengaduan');
+    $id_laborat = $this->input->post('id_laborat');
+
+    $this->db->set('status', 'Approved');
+    $this->db->where('id_pengaduan', $id_pengaduan);
+    $this->db->update('tb_pengaduan');
+
+    foreach($this->input->post('id_barang') as $key => $each){
+      $status = $this->input->post('status')[$key];
+      $id_barang = $this->input->post('id_barang')[$key];
+      $qty_rusak = $this->input->post('qty_rusak_approved')[$key];
+
+      $dataDtl = array(
+        "status" => $status,
+      );
+
+      $this->db->where('id_pengaduan', $id_pengaduan);
+      $this->db->where('id_barang', $id_barang);
+      $this->db->update('tb_dtl_pengaduan', $dataDtl);
+      ////////////////////////////////////////////////////////////////////////////////
+
+      $sql = $this->db->query("SELECT stock, harga_beli FROM tb_barang 
+                WHERE id_barang='".$id_barang."' AND id_laborat='".$id_laborat."'")->result_array();
+      $prev_qty = $sql[0]['stock'];
+      $harga = $sql[0]['harga_beli'];
+      $balance_qty = $prev_qty-$qty_rusak;
+
+      if($status == "Buang"){
+        $dataTran = array(
+              "tanggal_entry" => date("Y-m-d").' '.date("H:i:s"),
+              "id_transaksi" => $id_pengaduan,
+              "id_laborat" => $id_laborat,
+              "id_barang" => $id_barang,
+              "prev_qty" =>$prev_qty,
+              "tran_qty" => -$qty_rusak,
+              "balance_qty" =>$balance_qty,
+              "harga_satuan" => $harga,
+        );
+        $this->db->insert('tb_transaksi', $dataTran); 
+        
+        $this->db->set('stock', $balance_qty);
+        $this->db->where('id_barang', $id_barang);
+        $this->db->where('id_laborat', $id_laborat);
+        $this->db->update('tb_barang');
+      }
+      
+
+    }
+
+    $output = array("status" => "success", "message" => "Document berhasil di Approve", "DOC_NO" => $id_pengaduan);
+    echo json_encode($output);
+  }
+
+  public function notApprove(){
+    $id_pengaduan = $this->input->post('id_pengaduan');
+    $this->db->set('status', 'Not Approved');
+    $this->db->where('id_pengaduan', $id_pengaduan);
+    $this->db->update('tb_pengaduan');
+
+    $output = array("status" => "success", "message" => "Document tidak terapprove", "DOC_NO" => $id_pengaduan);
+    echo json_encode($output);
+  }
+
 }

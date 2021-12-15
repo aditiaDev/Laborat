@@ -10,13 +10,12 @@
               
               <div class="row">
                 <div class="col-lg-12">
-                  <?php echo -3 ?>
                   <table class="table tb_no_top">
                     <tr>
-                        <td style="width: 110px;">No Aduan</td>
-                        <td><input type="text" class="form-control" name="id_pengaduan" value="<New>" readonly></td>
+                        <td style="width: 110px;">No Pengadaan</td>
+                        <td><input type="text" class="form-control" name="id_pengadaan" value="<New>" readonly></td>
                         <td>Tanggal</td>
-                        <td><input type="text" class="form-control" name="tgl_pengaduan" readonly value="<?php echo date('d-M-Y'); ?>"></td>
+                        <td><input type="text" class="form-control" name="tgl_pengajuan" readonly value="<?php echo date('d-M-Y'); ?>"></td>
                         <td>Dibuat</td>
                         <td><input type="text" class="form-control" name="no_induk" value="<?php echo $this->session->userdata('no_induk') ?>" readonly></td>
                         <td><input type="text" class="form-control" name="nama" value="<?php echo $this->session->userdata('nama') ?>" readonly></td>
@@ -37,7 +36,7 @@
                     </tr>
                   </table>
                 </div>
-                <?php  if($this->session->userdata('hak_akses') == "laboran" ){ ?>
+                <?php  if($this->session->userdata('hak_akses') == "sarpras" ){ ?>
                 <div class="col-lg-12">
                   <div style="justify-content: center;display: flex;margin-bottom: 15px;">
                     <button type="button" id="BTN_APPROVE" class="btn btn-sm btn-warning" style="margin-right: 10px;" ><i class="bi bi-check2-all"></i> Approve</button>
@@ -47,16 +46,15 @@
                 <?php } ?>
                 <div class="col-lg-12">
                   <div style="position: relative;height: 400px;overflow: auto;display: block;">
-                    <table class="tabel" id="tb_data" style="min-width:1200px;font-size: 12px;">
+                    <table class="tabel" id="tb_data" style="width:1200px;font-size: 12px;">
                       <thead>
                         <th style="width: 60px;"><button type="button" class="btn btn-sm btn-light" id="ADD_ITEM"><i class="bi bi-plus-square"></i></button></th>
                         <th style="width: 170px;">Item No</th>
                         <th style="width: 60px;"></th>
-                        <th style="width: 250px;">Description</th>
-                        <th style="width: 90px;">Jml Rusak</th>
-                        <th style="width: 90px;">Jml Rusak Approved</th>
-                        <th>Remark</th>
-                        <?php if($this->session->userdata('hak_akses') == "laboran") echo "<th>Action</th>" ?>
+                        <th style="width: 300px;">Description</th>
+                        <th style="width: 170px;">Qty Pengajuan</th>
+                        <th>Qty di Setujui</th>
+                        <th style="width: 190px;">Harga</th>
                       </thead>
                       <tbody >
                           
@@ -89,6 +87,7 @@
                         <th>Kode</th>
                         <th>Deskripsi</th>
                         <th>Stock Tersedia</th>
+                        <th>Harga Pembelian terakhir</th>
                         <th>Gambar</th>
                       </thead>
                       <tbody></tbody>
@@ -148,7 +147,7 @@
   <?php    
     if(@$id){
   ?>
-      REFRESH_DATA('<?php echo $id; ?>')
+      // REFRESH_DATA('<?php echo $id; ?>')
       
 
       BUTTON_ACTION(false)
@@ -158,37 +157,10 @@
 
   <?php } ?>
 
-  function CONTROL_NEW(param){
-
-    $("#BTN_LAB").attr('disabled',param)
-    $("#ADD_ITEM").attr('disabled',param)
-    $(".delRow").attr('disabled',param)
-
-    $("[name='keterangan']").attr('disabled',param)
-    $(".showItem").attr('disabled', param)
-    $("[name='qty_rusak[]']").attr('readonly', param)
-    $("[name='ket_rusak[]']").attr('readonly', param)
-    $("[name='qty_rusak_approved[]']").attr('readonly', param)
-    $("[name='status[]']").attr('readonly', param)
-  }
-
   $("#BTN_NEW").click(function(){
     event.preventDefault();
-    window.location.href = '<?php echo site_url('Pengaduan/addData') ?>';
+    window.location.href = '<?php echo site_url('Pengadaan/addData') ?>';
 
-  })
-
-  $("#BTN_EDIT").click(function(){
-    event.preventDefault();
-    save_method='edit';
-    id_data = $("[name='id_pengaduan']").val()
-    BUTTON_ACTION(true)
-
-    $("#BTN_SAVE").attr('disabled', false)
-    $("#BTN_BATAL").attr('disabled', false)
-    $("#BTN_APPROVE").attr('disabled', true)
-    $("#BTN_NOT_APPROVE").attr('disabled', true)
-    $("[name='qty_rusak_approved[]']").attr('readonly', false)
   })
 
   $("#BTN_LAB").on("click",function() {
@@ -231,7 +203,7 @@
         "bDestroy": true,
         "select": true,
         "ajax": {
-            "url": "<?php echo site_url('Peminjaman/getDataBarang') ?>",
+            "url": "<?php echo site_url('Pengadaan/getDataBarang') ?>",
             "type": "POST",
             "data": {
                         id_laborat: $("[name='id_laborat']").val()
@@ -239,7 +211,7 @@
         },
         "columns": [
             { "data": "id_barang" },{ "data": "nama_barang" }
-            ,{ "data": "stock_tersedia" }
+            ,{ "data": "stock_tersedia" },{ "data": "harga_beli" }
             ,{ "data": "foto",
               render: function (data, type, row, meta) {
                   if(data){
@@ -269,6 +241,7 @@
       if (data_not_in.indexOf(Rowdata.id_barang) < 0) {
         $("[name='id_barang[]']").eq(indexRow).val(Rowdata.id_barang);
         $("#tb_data tbody tr:eq("+indexRow+") td:eq(3)").text(Rowdata.nama_barang);
+        $("[name='harga[]']").eq(indexRow).val(Rowdata.harga_beli);
       }else{
         alert("Item sudah ada di list");
         return;
@@ -287,9 +260,9 @@
               '<td><input type="text" class="form-control" name="id_barang[]" readonly required></td>'+
               '<td style="text-align:center;"><button class="btn btn-sm btn-outline-secondary showItem" ><i class="bi bi-list-task"></i></button></td>'+
               '<td></td>'+
-              '<td><input type="text" class="form-control" name="qty_rusak[]" onkeypress="return onlyNumberKey(event)" required ></td>'+
-              '<td><input type="text" class="form-control" name="qty_rusak_approved[]" onkeypress="return onlyNumberKey(event)" readonly required ></td>'+
-              '<td><input type="text" class="form-control" name="ket_rusak[]"  ></td>'+
+              '<td><input type="text" class="form-control" name="qty_pengajuan[]" onkeypress="return onlyNumberKey(event)" required ></td>'+
+              '<td><input type="text" class="form-control" name="qty_approved[]" onkeypress="return onlyNumberKey(event)" readonly required ></td>'+
+              '<td><input type="text" class="form-control" name="harga[]"  ></td>'+
           '</tr>';
     $("#tb_data tbody").append(row);
   })
@@ -301,124 +274,4 @@
       $("#tb_data tbody tr:eq("+indexRow+")").remove();
       
   });
-
-  $("#BTN_SAVE").click(function(){
-    event.preventDefault();
-    var formData = $("#FRM_DATA").serialize();
-    
-    if(save_method == 'save') {
-        urlPost = "<?php echo site_url('Pengaduan/saveData') ?>";
-    }else{
-        urlPost = "<?php echo site_url('Pengaduan/updateData') ?>";
-        formData+="&id_pengaduan="+id_data
-    }
-    // console.log(formData)
-    ACTION(urlPost, formData)
-  })
-
-  function ACTION(urlPost, formData){
-    $.ajax({
-        url: urlPost,
-        type: "POST",
-        data: formData,
-        dataType: "JSON",
-        success: function(data){
-          console.log(data)
-          if (data.status == "success") {
-            REFRESH_DATA(data.DOC_NO)
-            toastr.info(data.message)
-            $("[name='id_pengaduan']").val(data.DOC_NO)
-
-            CONTROL_NEW(true)
-
-            BUTTON_ACTION(false)
-            $("#BTN_SAVE").attr('disabled', true)
-            $("#BTN_BATAL").attr('disabled', true)
-
-            
-          }else{
-            toastr.error(data.message)
-          }
-        }
-    })
-  }
-
-  function REFRESH_DATA(id){
-    var arr = [];var noRow=0;var rowData = '';
-      $("#tb_data tbody tr").remove();
-      $.ajax({
-          url : "<?php echo site_url('Pengaduan/getDataHdr') ?>",
-          type: "POST",
-          dataType: "JSON",
-          data: {id_pengaduan: id},
-          success: function(data){
-              // console.log(data);
-              $("[name='id_pengaduan']").val(data[0]['id_pengaduan']);
-              $("[name='tgl_pengaduan']").val(data[0]['tgl_pengaduan']);
-              $("[name='no_induk']").val(data[0]['no_induk']);
-              $("[name='nama']").val(data[0]['nama']);
-              $("[name='status']").val(data[0]['status']);
-              $("[name='keterangan']").val(data[0]['keterangan']);
-              $("[name='id_laborat']").val(data[0]['id_laborat']);
-              $("[name='nm_laborat']").val(data[0]['nm_laborat']);
-              if (data[0]['status']=="Proses") {
-                $("#BTN_APPROVE").attr('disabled',false);
-                $("#BTN_NOT_APPROVE").attr('disabled',false);
-              }else{
-                $("#BTN_APPROVE").attr('disabled',true);
-                $("#BTN_NOT_APPROVE").attr('disabled',true);
-                $("#BTN_EDIT").attr('disabled',true);
-                $("#BTN_DELETE").attr('disabled',true);
-              }
-          }
-      });
-
-      $.ajax({
-          url : "<?php echo site_url('Pengaduan/getDataItems') ?>",
-          type: "POST",
-          dataType: "JSON",
-          data: {
-            id_pengaduan: id
-          },
-          success: function(data){
-            
-              $.each(data, function(index, value){
-                
-                noRow = index+1;
-                rowData = '<tr>'+
-                              '<td style="text-align:center;"><button type="button" class="btn btn-sm btn-danger delRow"><i class="bi bi-x-square"></i></button></td>'+
-                              '<td><input type="text" class="form-control" name="id_barang[]" value="'+value['id_barang']+'" readonly required></td>'+
-                              '<td style="text-align:center;"><button class="btn btn-sm btn-outline-secondary showItem" ><i class="bi bi-list-task"></i></button></td>'+
-                              '<td>'+value['nama_barang']+'</td>'+
-                              '<td><input type="text" class="form-control" name="qty_rusak[]" value="'+value['qty_rusak']+'" onkeypress="return onlyNumberKey(event)" required ></td>'+
-                              '<td><input type="text" class="form-control" name="qty_rusak_approved[]" value="'+value['qty_rusak_approved']+'"  onkeypress="return onlyNumberKey(event)" readonly required ></td>'+
-                              '<td><input type="text" class="form-control" name="ket_rusak[]"  value="'+value['ket_rusak']+'" ></td>'+
-                              '<td><select class="form-select" name="status[]"><option value="Perbaiki">Perbaiki</option><option value="Buang">Buang</option></select></td>'+
-                          '</tr>';
-                          $("#tb_data tbody").append(rowData);
-                          $("[name='status[]']").eq(index).val(value['status'])
-              });
-
-              
-              CONTROL_NEW(true)
-          }
-      });
-  }
-
-  $("#BTN_APPROVE").click(function(){
-    event.preventDefault()
-    urlPost = "<?php echo site_url('Pengaduan/approve') ?>";
-    var formData = $("#FRM_DATA").serialize();
-    formData+="&id_pengaduan="+$("[name='id_pengaduan']").val()
-    ACTION(urlPost, formData)
-  })
-
-  $("#BTN_NOT_APPROVE").click(function(){
-    event.preventDefault()
-    if(!confirm('Not Approve this document?')) return
-      urlPost = "<?php echo site_url('Pengaduan/notApprove') ?>";
-      formData = "&id_pengaduan="+$("[name='id_pengaduan']").val()
-      ACTION(urlPost, formData)
-  })
-
 </script>

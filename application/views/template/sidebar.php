@@ -88,6 +88,15 @@
         </a>
       </li>
 
+      <?php if($this->session->userdata('hak_akses') == "bendahara"){ ?>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="<?php echo base_url("pengadaan/")?>">
+          <i class="bi bi-journals"></i>
+          <span>Upload Bukti Pembelian</span>
+        </a>
+      </li>
+      <?php } ?>
+
       <li class="nav-item">
         <a class="nav-link collapsed" href="#">
           <i class="bi bi-laptop"></i>

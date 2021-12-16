@@ -146,6 +146,8 @@
   var save_method='save';
   var id_data;
   var data_not_in="'XYZ'";
+  var hak_akses="<?php echo $this->session->userdata('hak_akses') ?>";
+
   ACTION_MENU()
   BUTTON_ACTION(true)
   $("#BTN_SAVE").attr('disabled', false)
@@ -348,6 +350,7 @@
 
   function REFRESH_DATA(id){
     var arr = [];var noRow=0;var rowData = '';
+    
       $("#tb_data tbody tr").remove();
       $.ajax({
           url : "<?php echo site_url('Pengadaan/getDataHdr') ?>",
@@ -364,7 +367,10 @@
               $("[name='keterangan']").val(data[0]['keterangan']);
               $("[name='id_laborat']").val(data[0]['id_laborat']);
               $("[name='nm_laborat']").val(data[0]['nm_laborat']);
-              if (data[0]['status']=="Proses") {
+              if (data[0]['status']=="Proses" && hak_akses=="sarpras") {
+                $("#BTN_APPROVE").attr('disabled',false);
+                $("#BTN_NOT_APPROVE").attr('disabled',false);
+              }else if (data[0]['status']=="Approved sarpras" && hak_akses=="kepsek") {
                 $("#BTN_APPROVE").attr('disabled',false);
                 $("#BTN_NOT_APPROVE").attr('disabled',false);
               }else{
@@ -406,4 +412,33 @@
           }
       });
   }
+
+  $("#BTN_EDIT").click(function(){
+      event.preventDefault();
+      save_method='edit'
+      id_data = $("[name='id_pengadaan']").val()
+      $("[name='qty_approved[]']").attr('readonly', false)
+      $("[name='harga[]']").attr('readonly', false)
+      BUTTON_ACTION(true)
+      
+      $("#BTN_SAVE").attr('disabled', false)
+      $("#BTN_BATAL").attr('disabled', false)
+      $("#BTN_APPROVE").attr('disabled',true);
+      $("#BTN_NOT_APPROVE").attr('disabled',true);
+    })
+
+  $("#BTN_APPROVE").click(function(){
+    event.preventDefault()
+    urlPost = "<?php echo site_url('Pengadaan/approve') ?>";
+    formData="id_pengadaan="+$("[name='id_pengadaan']").val()
+    ACTION(urlPost, formData)
+  })
+
+  $("#BTN_NOT_APPROVE").click(function(){
+    event.preventDefault()
+    if(!confirm('Not Approve this document?')) return
+    urlPost = "<?php echo site_url('Pengadaan/notApprove') ?>";
+    formData="id_pengadaan="+$("[name='id_pengadaan']").val()
+    ACTION(urlPost, formData)
+  })
 </script>

@@ -152,4 +152,77 @@ class Pengadaan extends CI_Controller {
     echo json_encode($data);
   }
 
+  public function updateData(){
+
+    $this->load->library('form_validation');
+    $this->form_validation->set_rules('id_pengadaan', 'No Aduan', 'required');
+    $this->form_validation->set_rules('tgl_pengajuan', 'Tanggal Pengajuan', 'required');
+    $this->form_validation->set_rules('no_induk', 'Nomor Induk User', 'required');
+
+    $this->form_validation->set_rules('id_barang[]', 'Barang', 'required');
+    $this->form_validation->set_rules('qty_approved[]', 'Qty Approve', 'required');
+    $this->form_validation->set_rules('harga[]', 'Harga', 'required');
+
+    if($this->form_validation->run() == FALSE){
+      // echo validation_errors();
+      $output = array("status" => "error", "message" => validation_errors());
+      echo json_encode($output);
+      return false;
+    }
+
+    foreach($this->input->post('id_barang') as $key => $each){
+      $total_belanja = $this->input->post('qty_approved')[$key] * $this->input->post('harga')[$key];
+      $dataDtl = array(
+        "qty_approved" => $this->input->post('qty_approved')[$key],
+        "harga" => $this->input->post('harga')[$key],
+        "total_belanja" => $total_belanja
+      );
+
+      $this->db->where('id_pengadaan', $this->input->post('id_pengadaan'));
+      $this->db->where('id_barang', $this->input->post('id_barang')[$key]);
+      $this->db->update('tb_dtl_pengadaan', $dataDtl);
+    }
+
+    if($this->db->error()['message'] != ""){
+      $output = array("status" => "error", "message" => $this->db->error()['message']);
+      echo json_encode($output);
+      return false;
+    }
+    $output = array("status" => "success", "message" => "Data Berhasil di Update", "DOC_NO" => $this->input->post('id_pengadaan'));
+    echo json_encode($output);
+
+  }
+
+  public function approve(){
+    $id_pengadaan = $this->input->post('id_pengadaan');
+    $hak_akses = $this->session->userdata('hak_akses');
+    if($hak_akses == "sarpras"){
+      $status = "Approved sarpras";
+    }elseif($hak_akses == "kepsek"){
+      $status = "Approved kepsek";
+    }
+    $this->db->set('status', $status);
+    $this->db->where('id_pengadaan', $id_pengadaan);
+    $this->db->update('tb_pengadaan');
+
+    $output = array("status" => "success", "message" => "Document berhasil di Approve", "DOC_NO" => $id_pengadaan);
+    echo json_encode($output);
+  }
+
+  public function notApprove(){
+    $id_pengadaan = $this->input->post('id_pengadaan');
+    $hak_akses = $this->session->userdata('hak_akses');
+    if($hak_akses == "sarpras"){
+      $status = "Not Approved sarpras";
+    }elseif($hak_akses == "kepsek"){
+      $status = "Not Approved kepsek";
+    }
+    $this->db->set('status', $status);
+    $this->db->where('id_pengadaan', $id_pengadaan);
+    $this->db->update('tb_pengadaan');
+
+    $output = array("status" => "success", "message" => "Document tidak terapprove", "DOC_NO" => $id_pengadaan);
+    echo json_encode($output);
+  }
+
 }

@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.2
+-- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 15 Des 2021 pada 15.00
--- Versi server: 10.4.10-MariaDB
--- Versi PHP: 7.3.12
+-- Waktu pembuatan: 16 Des 2021 pada 08.29
+-- Versi server: 10.4.13-MariaDB
+-- Versi PHP: 7.3.19
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -46,9 +45,9 @@ CREATE TABLE `tb_barang` (
 
 INSERT INTO `tb_barang` (`id_barang`, `nama_barang`, `stock`, `stock_tersedia`, `harga_beli`, `min_stock`, `foto`, `id_kategori`, `id_laborat`) VALUES
 ('LFS01FS0001', 'Jangka Sorong/caliper digital', 5, 5, 700000, 3, '1639519612241.jpg', 'FS', 'LFS01'),
-('LFS01FS0002', 'Alat Peraga Tata Surya', 3, 3, 450000, 2, '1639519654608.jpeg', 'FS', 'LFS01'),
+('LFS01FS0002', 'Alat Peraga Tata Surya', 3, 3, 450000, 4, '1639519654608.jpeg', 'FS', 'LFS01'),
 ('LKM01KM0001', 'GELAS KIMIA 500ML', 10, 10, 65000, 7, '1639519770999.jpg', 'KM', 'LKM01'),
-('LKM01KM0002', 'MICROSKOP', 2, 2, 4500000, 1, '1639519816796.png', 'KM', 'LKM01');
+('LKM01KM0002', 'MICROSKOP', 2, 2, 4500000, 3, '1639519816796.png', 'KM', 'LKM01');
 
 -- --------------------------------------------------------
 
@@ -107,10 +106,19 @@ CREATE TABLE `tb_dtl_pengadaan` (
   `qty_pengajuan` int(11) DEFAULT NULL,
   `qty_approved` int(11) DEFAULT NULL,
   `harga` float DEFAULT NULL,
-  `status` enum('Approved','Not Approved','Proses') DEFAULT NULL,
   `total_belanja` float DEFAULT NULL,
   `id_pengadaan` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `tb_dtl_pengadaan`
+--
+
+INSERT INTO `tb_dtl_pengadaan` (`id_dtl_pengadaan`, `id_barang`, `qty_pengajuan`, `qty_approved`, `harga`, `total_belanja`, `id_pengadaan`) VALUES
+(1, 'LFS01FS0001', 2, 2, 100000, 200000, 'PG2021120002'),
+(2, 'LFS01FS0002', 2, 2, 450000, 900000, 'PG2021120001'),
+(3, 'LFS01FS0001', 3, 3, 700000, 2100000, 'PG2021120001'),
+(4, 'LKM01KM0002', 2, 2, 4500000, 9000000, 'PG2021120003');
 
 -- --------------------------------------------------------
 
@@ -230,8 +238,8 @@ CREATE TABLE `tb_pendaftaran` (
 CREATE TABLE `tb_pengadaan` (
   `id_pengadaan` varchar(20) NOT NULL,
   `tgl_pengajuan` date DEFAULT NULL,
-  `status` enum('Process','Approved sarpras','Not Approved sarpras','Approved kepsek','Not Approved kepsek','Selesai') DEFAULT NULL,
   `keterangan` text DEFAULT NULL,
+  `status` enum('Proses','Approved sarpras','Not Approved sarpras','Approved kepsek','Not Approved kepsek','Selesai') NOT NULL,
   `no_induk` varchar(30) DEFAULT NULL,
   `id_periode` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -240,8 +248,10 @@ CREATE TABLE `tb_pengadaan` (
 -- Dumping data untuk tabel `tb_pengadaan`
 --
 
-INSERT INTO `tb_pengadaan` (`id_pengadaan`, `tgl_pengajuan`, `status`, `keterangan`, `no_induk`, `id_periode`) VALUES
-('1', '2021-12-15', 'Process', 'test', '0012345678', 3);
+INSERT INTO `tb_pengadaan` (`id_pengadaan`, `tgl_pengajuan`, `keterangan`, `status`, `no_induk`, `id_periode`) VALUES
+('PG2021120001', '2021-12-16', 'test 1', 'Proses', '2111123457', 2),
+('PG2021120002', '2021-12-15', 'test', 'Proses', '0012345678', 2),
+('PG2021120003', '2021-12-16', 'Barang rusak', 'Proses', '2111123457', 2);
 
 -- --------------------------------------------------------
 
@@ -473,7 +483,7 @@ ALTER TABLE `tb_dtl_peminjaman`
 -- AUTO_INCREMENT untuk tabel `tb_dtl_pengadaan`
 --
 ALTER TABLE `tb_dtl_pengadaan`
-  MODIFY `id_dtl_pengadaan` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_dtl_pengadaan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `tb_dtl_pengaduan`

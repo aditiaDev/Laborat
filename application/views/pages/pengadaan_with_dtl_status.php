@@ -36,10 +36,7 @@
                     </tr>
                   </table>
                 </div>
-                <?php
-                  $user_akses = array("sarpras","kepsek","bendahara");
-                  if(in_array($this->session->userdata('hak_akses'), $user_akses)){ 
-                ?>
+                <?php  if($this->session->userdata('hak_akses') == "sarpras" ){ ?>
                 <div class="col-lg-12">
                   <div style="justify-content: center;display: flex;margin-bottom: 15px;">
                     <button type="button" id="BTN_APPROVE" class="btn btn-sm btn-warning" style="margin-right: 10px;" ><i class="bi bi-check2-all"></i> Approve</button>
@@ -58,6 +55,7 @@
                         <th style="width: 150px;">Qty Pengajuan</th>
                         <th>Qty di Setujui</th>
                         <th style="width: 170px;">Harga</th>
+                        <th style="width: 160px;">Status</th>
                       </thead>
                       <tbody >
                           
@@ -293,6 +291,7 @@
               '<td><input type="text" class="form-control" name="qty_pengajuan[]" onkeypress="return onlyNumberKey(event)" required ></td>'+
               '<td><input type="text" class="form-control" name="qty_approved[]" onkeypress="return onlyNumberKey(event)" readonly required ></td>'+
               '<td><input type="text" class="form-control" name="harga[]"  ></td>'+
+              '<td><select class="form-select" name="status[]" disabled><option value="Proses">Proses</option><option value="Approved">Approved</option><option value="Not Approved">Not Approved</option></select></td>'+
           '</tr>';
     $("#tb_data tbody").append(row);
   })
@@ -397,8 +396,10 @@
                               '<td><input type="text" class="form-control" name="qty_pengajuan[]" value="'+value['qty_pengajuan']+'" onkeypress="return onlyNumberKey(event)" readonly required ></td>'+
                               '<td><input type="text" class="form-control" name="qty_approved[]" value="'+value['qty_approved']+'" onkeypress="return onlyNumberKey(event)" readonly required ></td>'+
                               '<td><input type="text" class="form-control" name="harga[]" value="'+value['harga']+'" readonly></td>'+
+                              '<td><select class="form-select" name="status[]" disabled><option value="Proses">Proses</option><option value="Approved">Approved</option><option value="Not Approved">Not Approved</option></select></td>'+
                           '</tr>';
                   $("#tb_data tbody").append(rowData);
+                  $("[name='status[]']").eq(index).val(value['status'])
               });
 
               

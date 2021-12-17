@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 4.9.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 17 Des 2021 pada 08.31
--- Versi server: 10.4.13-MariaDB
--- Versi PHP: 7.3.19
+-- Waktu pembuatan: 17 Des 2021 pada 15.04
+-- Versi server: 10.4.10-MariaDB
+-- Versi PHP: 7.3.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -63,6 +64,13 @@ CREATE TABLE `tb_bukti_pembelanjaan` (
   `no_induk` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data untuk tabel `tb_bukti_pembelanjaan`
+--
+
+INSERT INTO `tb_bukti_pembelanjaan` (`id_nota`, `id_pengadaan`, `foto_nota`, `tgl_upload`, `no_induk`) VALUES
+('12345', 'PG2021120001', '1639743645290.jpg', '2021-12-17 19:20:45', '2111123458');
+
 -- --------------------------------------------------------
 
 --
@@ -94,6 +102,17 @@ CREATE TABLE `tb_dtl_peminjaman` (
   `id_peminjaman` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data untuk tabel `tb_dtl_peminjaman`
+--
+
+INSERT INTO `tb_dtl_peminjaman` (`id_dtl_peminjaman`, `id_barang`, `qty_pinjam`, `qty_approved`, `status`, `id_peminjaman`) VALUES
+(1, 'LFS01FS0002', 3, 3, 'Selesai', 'PJ2021120001'),
+(2, 'LFS01FS0001', 2, 2, 'Selesai', 'PJ2021120001'),
+(3, 'LKM01KM0001', 2, 2, 'Proses', 'PJ2021120002'),
+(4, 'LKM01KM0002', 1, 1, 'Proses', 'PJ2021120002'),
+(5, 'LFS01FS0001', 3, 3, 'Proses', 'PJ2021120003');
+
 -- --------------------------------------------------------
 
 --
@@ -116,8 +135,8 @@ CREATE TABLE `tb_dtl_pengadaan` (
 
 INSERT INTO `tb_dtl_pengadaan` (`id_dtl_pengadaan`, `id_barang`, `qty_pengajuan`, `qty_approved`, `harga`, `total_belanja`, `id_pengadaan`) VALUES
 (1, 'LFS01FS0001', 2, 2, 100000, 200000, 'PG2021120002'),
-(2, 'LFS01FS0002', 2, 2, 450000, 900000, 'PG2021120001'),
-(3, 'LFS01FS0001', 3, 3, 700000, 2100000, 'PG2021120001'),
+(2, 'LFS01FS0002', 2, 1, 450000, 450000, 'PG2021120001'),
+(3, 'LFS01FS0001', 3, 2, 700000, 1400000, 'PG2021120001'),
 (4, 'LKM01KM0002', 2, 2, 4500000, 9000000, 'PG2021120003');
 
 -- --------------------------------------------------------
@@ -217,6 +236,15 @@ CREATE TABLE `tb_peminjaman` (
   `id_periode` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data untuk tabel `tb_peminjaman`
+--
+
+INSERT INTO `tb_peminjaman` (`id_peminjaman`, `tgl_pengajuan`, `pinjam_mulai`, `pinjam_sampai`, `tgl_kembali`, `denda_keterlambatan`, `ket_kembali`, `keterangan`, `status`, `no_induk`, `id_periode`) VALUES
+('PJ2021120001', '2021-12-17', '2021-12-20', '2021-12-21', '2021-12-18', 0, 'Kembali dengan keadaan baik semua', 'Untuk pembelajaran', 'Selesai', '0012345678', 2),
+('PJ2021120002', '2021-12-17', '2021-12-17', '2021-12-17', NULL, NULL, NULL, 'Untuk Pembelajaran', 'Proses', '0012345678', 2),
+('PJ2021120003', '2021-12-17', '2021-12-17', '2021-12-20', NULL, NULL, NULL, 'Untuk Pembelajaran di kelas', 'Proses', '1234353', 2);
+
 -- --------------------------------------------------------
 
 --
@@ -249,7 +277,7 @@ CREATE TABLE `tb_pengadaan` (
 --
 
 INSERT INTO `tb_pengadaan` (`id_pengadaan`, `tgl_pengajuan`, `keterangan`, `status`, `no_induk`, `id_periode`) VALUES
-('PG2021120001', '2021-12-16', 'test 1', 'Approved kepsek', '2111123457', 2),
+('PG2021120001', '2021-12-16', 'test 1', 'Selesai', '2111123457', 2),
 ('PG2021120002', '2021-12-15', 'test', 'Proses', '0012345678', 2),
 ('PG2021120003', '2021-12-16', 'Barang rusak', 'Proses', '2111123457', 2);
 
@@ -342,7 +370,7 @@ INSERT INTO `tb_user` (`no_induk`, `nama`, `alamat`, `no_telp`, `no_wa`, `jekel`
 ('2100123456', 'Chandra Asih', 'Jln. Pemuda no 23, Semarang', '08512376871', '08512376871', 'Perempuan', 'sarpras', 'sarpras', 'sarpras', 'Tidak Aktif'),
 ('2111123456', 'Subejo, M.H', 'Jln. Merpati no 12, Pati', '0813247688112', '0813247688112', 'Laki-laki', 'kepsek', 'kepsek', 'kepsek', 'Aktif'),
 ('2111123457', 'Tresna, M.H', 'Jln. Merpati no 12, Pati', '0813247688113', '0813247688113', 'Laki-laki', 'laboran', 'laboran', 'laboran', 'Aktif'),
-('2111123458', 'Cahyo', 'Jln. Merpati no 12, Pati', '0813247688117', '0813247688115', 'Laki-laki', 'bendahara', 'bendahara', 'bendahara', 'Aktif');
+('2111123458', 'Joko Susilo', 'Jln. Merpati no 12, Pati', '0813247688115', '0813247688113', 'Laki-laki', 'bendahara', 'bendahara', 'bendahara', 'Aktif');
 
 --
 -- Indexes for dumped tables
@@ -472,7 +500,7 @@ ALTER TABLE `tb_dtl_monitoring`
 -- AUTO_INCREMENT untuk tabel `tb_dtl_peminjaman`
 --
 ALTER TABLE `tb_dtl_peminjaman`
-  MODIFY `id_dtl_peminjaman` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_dtl_peminjaman` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `tb_dtl_pengadaan`

@@ -27,13 +27,16 @@ class Peminjaman extends CI_Controller {
   }
 
   public function getAllData(){
+    if($this->session->userdata('hak_akses') == "siswa" or $this->session->userdata('hak_akses') == "guru"){
+      $akses = " And a.no_induk='".$this->session->userdata('no_induk')."'";
+    }
     $data['data'] = $this->db->query("SELECT a.id_peminjaman, DATE_FORMAT(a.tgl_pengajuan, '%d-%b-%Y') tgl_pengajuan, 
     concat(DATE_FORMAT(a.pinjam_mulai, '%d-%b-%Y'), ' - ', DATE_FORMAT(a.pinjam_sampai, '%d-%b-%Y')) tgl_peminjaman , a.keterangan,
     a.status, a.no_induk, b.hak_akses, b.nama, b.no_wa, c.periode
     FROM tb_peminjaman a, tb_user b, tb_periode c
     where a.no_induk=b.no_induk
     and a.id_periode=c.id_periode
-    and a.status <> 'Selesai'")->result();;
+    and a.status <> 'Selesai'".@$akses)->result();;
     echo json_encode($data);
   }
 
@@ -271,6 +274,29 @@ class Peminjaman extends CI_Controller {
     }
     $output = array("status" => "success", "message" => "Data Berhasil di Update");
     echo json_encode($output);
+  }
+
+  public function peminjamanRpt(){
+    $id_peminjaman = $this->input->post('idpeminjaman');
+    // $id_peminjaman = "PJ2021120001";
+    $data['hdr'] = $this->db->query("SELECT a.id_peminjaman, DATE_FORMAT(tgl_pengajuan, '%d-%b-%Y') tgl_pengajuan, 
+    DATE_FORMAT(pinjam_mulai, '%d-%b-%Y') pinjam_mulai, 
+    DATE_FORMAT(pinjam_sampai, '%d-%b-%Y') pinjam_sampai, a.keterangan,
+    a.no_induk, b.nama
+    FROM tb_peminjaman a, tb_user b
+    where a.no_induk=b.no_induk
+    and a.id_peminjaman='".$id_peminjaman."'")->result_array();
+
+    $data['items'] = $this->db->query("SELECT a.id_barang, b.nama_barang, a.qty_pinjam, a.qty_approved, b.stock_tersedia 
+    FROM tb_dtl_peminjaman a, tb_barang b
+    where a.id_barang=b.id_barang
+    and a.id_peminjaman='".$id_peminjaman."'")->result_array();
+
+    $mpdf = new \Mpdf\Mpdf(['format' => 'A4-P', 'margin_left' => '5', 'margin_right' => '5']);
+    $mpdf->setFooter('{PAGENO}');
+    $html = $this->load->view('report/peminjamanRpt',$data, true);
+    $mpdf->WriteHTML($html);
+    $mpdf->Output();
   }
 
 }

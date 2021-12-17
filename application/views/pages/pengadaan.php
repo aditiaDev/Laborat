@@ -46,12 +46,16 @@
                     <button type="button" id="BTN_NOT_APPROVE" class="btn btn-sm btn-danger" ><i class="bi bi-x-circle"></i> Not Approve</button>
                   </div>
                 </div>
-                <?php } ?>
+                <?php 
+                } 
+                if($this->session->userdata('hak_akses') == "bendahara"){
+                ?>
                 <div class="col-lg-12">
                   <div style="justify-content: center;display: flex;margin-bottom: 15px;">
                     <button type="button" id="BTN_UPLOAD" disabled class="btn btn-sm btn-warning" style="margin-right: 10px;" ><i class="bi bi-cloud-upload-fill"></i> Upload Nota</button>
                   </div>
                 </div>
+                <?php } ?>
                 <div class="col-lg-12">
                   <div style="position: relative;height: 400px;overflow: auto;display: block;">
                     <table class="tabel" id="tb_data" style="min-width:1200px;font-size: 12px;">
@@ -144,7 +148,7 @@
       <div class="modal fade" id="modal_upload" tabindex="-1">
         <div class="modal-dialog">
           <div class="modal-content">
-              <form id="FRM_BUKTI">
+              <form id="FRM_BUKTI"  method="post" enctype="multipart/form-data">
                 <div class="modal-header">
                   <h5 class="modal-title">Data</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -223,6 +227,8 @@
   })
 
   $("#BTN_UPLOAD").click(function(){
+    $("#tb_upload tbody tr").remove()
+
     $("#modal_upload").modal('show')
   })
 
@@ -251,7 +257,28 @@
     urlPost = "<?php echo site_url('pengadaan/uploadBukti/') ?>"+$("[name='id_pengadaan']").val();
     
     // console.log(formData)
-    ACTION(urlPost, formData)
+    $.ajax({
+      url: urlPost,
+      type: "POST",
+      data: formData,
+      processData : false,
+      cache: false,
+      contentType : false,
+      success: function(data){
+        data = JSON.parse(data)
+        console.log(data)
+        if (data.status == "success") {
+          toastr.info(data.message)
+          REFRESH_DATA(data.DOC_NO)
+
+        }else{
+          toastr.error(data.message)
+        }
+      },
+      error: function (err) {
+        console.log(err);
+      }
+    })
     $("#modal_upload").modal('hide')
   })
 
@@ -444,7 +471,12 @@
                 $("#BTN_NOT_APPROVE").attr('disabled',false);
               }else if (data[0]['status']=="Approved kepsek") {
                 $("#BTN_UPLOAD").attr('disabled',false);
+                $("#BTN_APPROVE").attr('disabled',true);
+                $("#BTN_NOT_APPROVE").attr('disabled',true);
+                $("#BTN_EDIT").attr('disabled',true);
+                $("#BTN_DELETE").attr('disabled',true);
               }else{
+                $("#BTN_UPLOAD").attr('disabled',true);
                 $("#BTN_APPROVE").attr('disabled',true);
                 $("#BTN_NOT_APPROVE").attr('disabled',true);
                 $("#BTN_EDIT").attr('disabled',true);

@@ -59,12 +59,14 @@
         </a>
       </li>
 
+      <?php if($this->session->userdata('hak_akses') == "laboran"){ ?>
       <li class="nav-item">
         <a class="nav-link collapsed" href="<?php echo base_url("pengembalian/")?>">
           <i class="bi bi-minecart"></i>
           <span>Pengembalian Alat</span>
         </a>
       </li>
+      <?php } ?>
 
       <?php if($this->session->userdata('hak_akses') == "siswa" or $this->session->userdata('hak_akses') == "guru"){ ?>
         <li class="nav-item">

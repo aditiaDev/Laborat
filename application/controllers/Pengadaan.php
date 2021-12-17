@@ -283,7 +283,7 @@ class Pengadaan extends CI_Controller {
       "id_nota" => $this->input->post('id_nota'),
       "id_pengadaan" => $id_pengadaan,
       "tgl_upload" => date("Y-m-d").' '.date("H:i:s"),
-      "no_induk" => $this->input->post('no_induk'),
+      "no_induk" =>  $this->session->userdata('no_induk'),
     );
 
     if(!empty($_FILES['foto']['name'])){
@@ -291,7 +291,12 @@ class Pengadaan extends CI_Controller {
       $data['foto_nota'] = $upload;
     }
 
-    $this->db->insert('tb_barang', $data);
+    $this->db->insert('tb_bukti_pembelanjaan', $data);
+
+    $this->db->set('status', 'Selesai');
+    $this->db->where('id_pengadaan', $id_pengadaan);
+    $this->db->update('tb_pengadaan');
+
     $output = array("status" => "success", "message" => "Nota Berhasil di Upload", "DOC_NO" => $id_pengadaan);
     echo json_encode($output);
   }

@@ -462,6 +462,17 @@
       formData = "id_peminjaman="+$("[name='id_peminjaman']").val()
       ACTION(urlPost, formData)
   })
-  // $("#BTN_NOT_APPROVE").attr('disabled',false);
+  
+
+  $("#BTN_PRINT").click(function(){
+    var form = document.createElement("form");
+    $(form).attr("action", "<?php echo site_url('Peminjaman/peminjamanRpt') ?>")
+            .attr("method", "post")
+            .attr("target", "_blank");
+    $(form).html('<input type="hidden" name="idpeminjaman" value="'+$("[name='id_peminjaman']").val()+'" />');
+    document.body.appendChild(form);
+    $(form).submit();
+    document.body.removeChild(form);
+  });
 
 </script>

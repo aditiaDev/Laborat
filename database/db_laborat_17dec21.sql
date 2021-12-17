@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 17 Des 2021 pada 08.31
+-- Waktu pembuatan: 16 Des 2021 pada 08.29
 -- Versi server: 10.4.13-MariaDB
 -- Versi PHP: 7.3.19
 
@@ -56,7 +56,7 @@ INSERT INTO `tb_barang` (`id_barang`, `nama_barang`, `stock`, `stock_tersedia`, 
 --
 
 CREATE TABLE `tb_bukti_pembelanjaan` (
-  `id_nota` varchar(30) NOT NULL,
+  `id_nota` int(11) NOT NULL,
   `id_pengadaan` varchar(20) DEFAULT NULL,
   `foto_nota` text DEFAULT NULL,
   `tgl_upload` datetime DEFAULT NULL,
@@ -249,7 +249,7 @@ CREATE TABLE `tb_pengadaan` (
 --
 
 INSERT INTO `tb_pengadaan` (`id_pengadaan`, `tgl_pengajuan`, `keterangan`, `status`, `no_induk`, `id_periode`) VALUES
-('PG2021120001', '2021-12-16', 'test 1', 'Approved kepsek', '2111123457', 2),
+('PG2021120001', '2021-12-16', 'test 1', 'Proses', '2111123457', 2),
 ('PG2021120002', '2021-12-15', 'test', 'Proses', '0012345678', 2),
 ('PG2021120003', '2021-12-16', 'Barang rusak', 'Proses', '2111123457', 2);
 
@@ -341,8 +341,7 @@ INSERT INTO `tb_user` (`no_induk`, `nama`, `alamat`, `no_telp`, `no_wa`, `jekel`
 ('1234353', 'TEST edit', 'Alamat edit', '085446546542', '085446546543', 'Perempuan', 'guru', 'guru', 'guru', 'Aktif'),
 ('2100123456', 'Chandra Asih', 'Jln. Pemuda no 23, Semarang', '08512376871', '08512376871', 'Perempuan', 'sarpras', 'sarpras', 'sarpras', 'Tidak Aktif'),
 ('2111123456', 'Subejo, M.H', 'Jln. Merpati no 12, Pati', '0813247688112', '0813247688112', 'Laki-laki', 'kepsek', 'kepsek', 'kepsek', 'Aktif'),
-('2111123457', 'Tresna, M.H', 'Jln. Merpati no 12, Pati', '0813247688113', '0813247688113', 'Laki-laki', 'laboran', 'laboran', 'laboran', 'Aktif'),
-('2111123458', 'Cahyo', 'Jln. Merpati no 12, Pati', '0813247688117', '0813247688115', 'Laki-laki', 'bendahara', 'bendahara', 'bendahara', 'Aktif');
+('2111123457', 'Tresna, M.H', 'Jln. Merpati no 12, Pati', '0813247688113', '0813247688113', 'Laki-laki', 'laboran', 'laboran', 'laboran', 'Aktif');
 
 --
 -- Indexes for dumped tables
@@ -461,6 +460,12 @@ ALTER TABLE `tb_user`
 --
 -- AUTO_INCREMENT untuk tabel yang dibuang
 --
+
+--
+-- AUTO_INCREMENT untuk tabel `tb_bukti_pembelanjaan`
+--
+ALTER TABLE `tb_bukti_pembelanjaan`
+  MODIFY `id_nota` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `tb_dtl_monitoring`

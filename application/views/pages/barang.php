@@ -158,7 +158,7 @@
                     <div class="form-group">
                       <label id="lbl_foto">Foto</label>
                       <div class="custom-file">
-                        <input type="file"  name="foto">
+                        <input type="file"  name="foto" accept="image/png, image/gif, image/jpeg">
                       </div>
                     </div>
                   </div>

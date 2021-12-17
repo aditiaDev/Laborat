@@ -37,7 +37,7 @@
                   </table>
                 </div>
                 <?php
-                  $user_akses = array("sarpras","kepsek","bendahara");
+                  $user_akses = array("sarpras","kepsek");
                   if(in_array($this->session->userdata('hak_akses'), $user_akses)){ 
                 ?>
                 <div class="col-lg-12">
@@ -48,15 +48,20 @@
                 </div>
                 <?php } ?>
                 <div class="col-lg-12">
+                  <div style="justify-content: center;display: flex;margin-bottom: 15px;">
+                    <button type="button" id="BTN_UPLOAD" disabled class="btn btn-sm btn-warning" style="margin-right: 10px;" ><i class="bi bi-cloud-upload-fill"></i> Upload Nota</button>
+                  </div>
+                </div>
+                <div class="col-lg-12">
                   <div style="position: relative;height: 400px;overflow: auto;display: block;">
                     <table class="tabel" id="tb_data" style="min-width:1200px;font-size: 12px;">
                       <thead>
                         <th style="width: 60px;"><button type="button" class="btn btn-sm btn-light" id="ADD_ITEM"><i class="bi bi-plus-square"></i></button></th>
                         <th style="width: 170px;">Item No</th>
                         <th style="width: 60px;"></th>
-                        <th style="width: 300px;">Description</th>
+                        <th style="min-width: 300px;">Description</th>
                         <th style="width: 150px;">Qty Pengajuan</th>
-                        <th>Qty di Setujui</th>
+                        <th style="width: 150px;">Qty di Setujui</th>
                         <th style="width: 170px;">Harga</th>
                       </thead>
                       <tbody >
@@ -135,6 +140,37 @@
           </div>
         </div>
       </div>
+
+      <div class="modal fade" id="modal_upload" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+              <form id="FRM_BUKTI">
+                <div class="modal-header">
+                  <h5 class="modal-title">Data</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <table id="tb_upload" class="table table-bordered table-striped" style="font-size:12px;width:100%;">
+                        <thead>
+                          <th><button type="button" class="btn btn-sm btn-light" id="ADD_BUKTI"><i class="bi bi-plus-square"></i></button></th>
+                          <th>No Nota Pembelian</th>
+                          <th>Upload</th>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary" >Submit</button>
+                </div>
+              </form>
+          </div>
+        </div>
+      </div>
       <!-- End Basic Modal-->
   </section>
 
@@ -184,6 +220,39 @@
     event.preventDefault();
     window.location.href = '<?php echo site_url('Pengadaan/addData') ?>';
 
+  })
+
+  $("#BTN_UPLOAD").click(function(){
+    $("#modal_upload").modal('show')
+  })
+
+  $("#ADD_BUKTI").click(function(){
+    var row = '<tr>'+
+                '<td><button type="button" class="btn btn-sm btn-danger delRowBukti"><i class="bi bi-x-square"></i></button></td>'+
+                '<td><input type="text" name="id_nota" class="form-control" ></td>'+
+                '<td><input type="file" name="foto" accept="image/png, image/gif, image/jpeg"></td>'+
+              '</tr>'
+    $("#tb_upload tbody").append(row)
+  })
+
+  $("#tb_upload").on("click", "tbody tr .delRowBukti", function() {
+    event.preventDefault();
+    if(!confirm('Delete this data?')) return
+      indexRow = $(this).closest('td').parent()[0].sectionRowIndex
+      $("#tb_upload tbody tr:eq("+indexRow+")").remove();
+      
+  });
+
+
+  $("#FRM_BUKTI").on('submit', function(event){
+    event.preventDefault();
+    let formData = new FormData(this);
+
+    urlPost = "<?php echo site_url('pengadaan/uploadBukti/') ?>"+$("[name='id_pengadaan']").val();
+    
+    // console.log(formData)
+    ACTION(urlPost, formData)
+    $("#modal_upload").modal('hide')
   })
 
   $("#BTN_LAB").on("click",function() {
@@ -373,6 +442,8 @@
               }else if (data[0]['status']=="Approved sarpras" && hak_akses=="kepsek") {
                 $("#BTN_APPROVE").attr('disabled',false);
                 $("#BTN_NOT_APPROVE").attr('disabled',false);
+              }else if (data[0]['status']=="Approved kepsek") {
+                $("#BTN_UPLOAD").attr('disabled',false);
               }else{
                 $("#BTN_APPROVE").attr('disabled',true);
                 $("#BTN_NOT_APPROVE").attr('disabled',true);

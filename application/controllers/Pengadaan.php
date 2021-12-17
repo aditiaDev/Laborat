@@ -26,12 +26,30 @@ class Pengadaan extends CI_Controller {
     $this->load->view('template/footer');
   }
 
+  public function buktiBeli(){
+
+    $this->load->view('template/header');
+    $this->load->view('template/sidebar');
+    $this->load->view('pages/data_bukti_pembelian');
+    $this->load->view('template/footer');
+  }
+
   public function getAllData(){
     $data['data'] = $this->db->query("SELECT a.id_pengadaan, DATE_FORMAT(a.tgl_pengajuan, '%d-%b-%Y') tgl_pengajuan, 
     a.status, a.no_induk, b.hak_akses, b.nama, c.periode, a.keterangan
     FROM tb_pengadaan a, tb_user b, tb_periode c
     where a.no_induk=b.no_induk
     and a.id_periode=c.id_periode")->result();;
+    echo json_encode($data);
+  }
+
+  public function getBuktiBeli(){
+    $data['data'] = $this->db->query("SELECT a.id_pengadaan, DATE_FORMAT(a.tgl_pengajuan, '%d-%b-%Y') tgl_pengajuan, 
+    a.status, a.no_induk, b.hak_akses, b.nama, c.periode, a.keterangan
+    FROM tb_pengadaan a, tb_user b, tb_periode c
+    where a.no_induk=b.no_induk
+    and a.id_periode=c.id_periode
+    and a.status in ('Approved kepsek', 'Selesai')")->result();;
     echo json_encode($data);
   }
 
@@ -222,6 +240,59 @@ class Pengadaan extends CI_Controller {
     $this->db->update('tb_pengadaan');
 
     $output = array("status" => "success", "message" => "Document tidak terapprove", "DOC_NO" => $id_pengadaan);
+    echo json_encode($output);
+  }
+
+  private function _do_upload(){
+		$config['upload_path']          = 'assets/images/bukti/';
+    $config['allowed_types']        = 'gif|jpg|jpeg|png';
+    $config['max_size']             = 5000; //set max size allowed in Kilobyte
+    $config['max_width']            = 4000; // set max width image allowed
+    $config['max_height']           = 4000; // set max height allowed
+    $config['file_name']            = round(microtime(true) * 1000); //just milisecond timestamp fot unique name
+
+    $this->load->library('upload', $config);
+
+    if(!$this->upload->do_upload('foto')) //upload and validate
+    {
+      $data['inputerror'] = 'foto';
+			$data['message'] = 'Upload error: '.$this->upload->display_errors('',''); //show ajax error
+			$data['status'] = FALSE;
+			echo json_encode($data);
+			exit();
+		}
+		return $this->upload->data('file_name');
+	}
+
+  public function uploadBukti($id_pengadaan){
+
+    $this->load->library('form_validation');
+    $this->form_validation->set_rules('id_nota', 'No Nota', 'required');
+    if (empty($_FILES['foto']['name'])){
+      $this->form_validation->set_rules('foto', 'Nota Pembelian', 'required');
+    }
+
+    if($this->form_validation->run() == FALSE){
+      // echo validation_errors();
+      $output = array("status" => "error", "message" => validation_errors());
+      echo json_encode($output);
+      return false;
+    }
+
+    $data = array(
+      "id_nota" => $this->input->post('id_nota'),
+      "id_pengadaan" => $id_pengadaan,
+      "tgl_upload" => date("Y-m-d").' '.date("H:i:s"),
+      "no_induk" => $this->input->post('no_induk'),
+    );
+
+    if(!empty($_FILES['foto']['name'])){
+      $upload = $this->_do_upload();
+      $data['foto_nota'] = $upload;
+    }
+
+    $this->db->insert('tb_barang', $data);
+    $output = array("status" => "success", "message" => "Nota Berhasil di Upload", "DOC_NO" => $id_pengadaan);
     echo json_encode($output);
   }
 

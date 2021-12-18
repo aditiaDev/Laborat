@@ -544,4 +544,15 @@
     formData="id_pengadaan="+$("[name='id_pengadaan']").val()
     ACTION(urlPost, formData)
   })
+
+  $("#BTN_PRINT").click(function(){
+    var form = document.createElement("form");
+    $(form).attr("action", "<?php echo site_url('Pengadaan/pengadaanRpt') ?>")
+            .attr("method", "post")
+            .attr("target", "_blank");
+    $(form).html('<input type="hidden" name="idpengadaan" value="'+$("[name='id_pengadaan']").val()+'" />');
+    document.body.appendChild(form);
+    $(form).submit();
+    document.body.removeChild(form);
+  });
 </script>

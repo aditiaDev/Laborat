@@ -450,7 +450,8 @@
     if(!confirm('Approve this document?')) return
       var id_peminjaman = $("[name='id_peminjaman']").val()
       urlPost = "<?php echo site_url('Peminjaman/approve') ?>";
-      formData = "id_peminjaman="+id_peminjaman
+      var formData = $("#FRM_DATA").serialize();
+      // formData += "id_peminjaman="+id_peminjaman
       ACTION(urlPost, formData)
       
   })

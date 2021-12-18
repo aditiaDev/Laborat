@@ -7,6 +7,14 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Data Pengaduan</h5>
+
+              <?php if($this->session->userdata('hak_akses') == "siswa" or $this->session->userdata('hak_akses') == "guru"){ ?>
+              <div class="row">
+                <div class="col-3">
+                  <a class="btn btn-sm btn-primary rounded-pill" href="<?php echo base_url('pengaduan/addData')?>" style="margin-bottom: 10px;" ><i class="bi bi-cloud-plus-fill"></i> Tambah</a>
+                </div>
+              </div>
+              <?php } ?>
               
               <table id="tb_data" class="table table-bordered table-striped" style="font-size:12px;">
                 <thead>

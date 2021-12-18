@@ -221,8 +221,16 @@ class Peminjaman extends CI_Controller {
     $this->db->where('id_peminjaman', $id_peminjaman);
     $this->db->update('tb_dtl_peminjaman');
 
+    
+
+    foreach($this->input->post('id_barang') as $key => $each){
+      $id_barang = $this->input->post('id_barang')[$key];
+      $this->db->query("UPDATE tb_barang SET stock_tersedia=stock_tersedia-".$this->input->post('qty_approved')[$key]." WHERE id_barang='".$id_barang."'");
+    }
+
     $output = array("status" => "success", "message" => "Document berhasil di Approve", "DOC_NO" => $id_peminjaman);
     echo json_encode($output);
+
   }
 
   public function notApprove(){
@@ -272,6 +280,12 @@ class Peminjaman extends CI_Controller {
       echo json_encode($output);
       return false;
     }
+
+    foreach($this->input->post('id_barang') as $key => $each){
+      $id_barang = $this->input->post('id_barang')[$key];
+      $this->db->query("UPDATE tb_barang SET stock_tersedia=stock_tersedia+".$this->input->post('qty_approved')[$key]." WHERE id_barang='".$id_barang."'");
+    }
+
     $output = array("status" => "success", "message" => "Data Berhasil di Update");
     echo json_encode($output);
   }

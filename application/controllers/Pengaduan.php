@@ -27,6 +27,10 @@ class Pengaduan extends CI_Controller {
   }
 
   public function getAllData(){
+    if($this->session->userdata('hak_akses') == "siswa" or $this->session->userdata('hak_akses') == "guru"){
+      $akses = " And a.no_induk='".$this->session->userdata('no_induk')."'";
+    }
+
     $data['data'] = $this->db->query("SELECT a.id_pengaduan, c.periode, 
     DATE_FORMAT(a.tgl_pengaduan, '%d-%b-%Y') tgl_pengaduan, 
     b.no_induk, b.nama, b.hak_akses, 
@@ -34,7 +38,7 @@ class Pengaduan extends CI_Controller {
     FROM tb_pengaduan a, tb_user b, tb_periode c
     where a.no_induk=b.no_induk
     and a.id_periode=c.id_periode
-    ")->result();;
+    ".@$akses)->result();;
     echo json_encode($data);
   }
 
@@ -234,6 +238,28 @@ class Pengaduan extends CI_Controller {
 
     $output = array("status" => "success", "message" => "Document tidak terapprove", "DOC_NO" => $id_pengaduan);
     echo json_encode($output);
+  }
+
+  public function pengaduanRpt(){
+    $id_pengaduan = $this->input->post('idpengaduan');
+
+    $data['hdr'] = $this->db->query("SELECT a.id_pengaduan, 
+    DATE_FORMAT(a.tgl_pengaduan, '%d-%b-%Y') tgl_pengaduan, b.no_induk, b.nama, 
+    a.keterangan, a.status, b.hak_akses 
+    FROM tb_pengaduan a, tb_user b
+    where a.no_induk=b.no_induk    
+    and a.id_pengaduan='".$id_pengaduan."'")->result_array();
+
+    $data['items'] = $this->db->query("SELECT a.id_barang, b.nama_barang, a.qty_rusak, a.qty_rusak_approved, a.ket_rusak, a.status 
+    FROM tb_dtl_pengaduan a, tb_barang b
+    where a.id_barang=b.id_barang
+    and a.id_pengaduan='".$id_pengaduan."'")->result_array();
+
+    $mpdf = new \Mpdf\Mpdf(['format' => 'A4-P', 'margin_left' => '5', 'margin_right' => '5']);
+    $mpdf->setFooter('{PAGENO}');
+    $html = $this->load->view('report/pengaduanRpt',$data, true);
+    $mpdf->WriteHTML($html);
+    $mpdf->Output();
   }
 
 }

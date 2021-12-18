@@ -73,6 +73,11 @@
       font-family: 'bootstrap-icons';
     }
 
+    .table tbody tr td input {
+        font-size: 14px;
+        font-family: serif;
+    }
+
     .tabel {
       font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
       border-collapse: collapse;

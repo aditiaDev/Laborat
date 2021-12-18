@@ -273,7 +273,6 @@ class Pengadaan extends CI_Controller {
     }
 
     if($this->form_validation->run() == FALSE){
-      // echo validation_errors();
       $output = array("status" => "error", "message" => validation_errors());
       echo json_encode($output);
       return false;
@@ -297,8 +296,54 @@ class Pengadaan extends CI_Controller {
     $this->db->where('id_pengadaan', $id_pengadaan);
     $this->db->update('tb_pengadaan');
 
+    $data = $this->db->query("SELECT a.id_barang, a.qty_approved, a.harga, b.id_laborat, b.stock FROM tb_dtl_pengadaan a, tb_barang b 
+    WHERE a.id_barang=b.id_barang 
+    and a.id_pengadaan='".$id_pengadaan."'")->result_array();
+
+    foreach($data as $brg){
+      $balance_qty = $brg['qty_approved']+$brg['stock'];
+      $this->db->query("UPDATE tb_barang SET stock=stock+".$brg['qty_approved'].", 
+      stock_tersedia=stock_tersedia+".$brg['qty_approved'].", 
+      harga='".$brg['qty_approved']."'
+      where id_barang='".$brg['id_barang']."'");
+
+      $dataTran = array(
+            "tanggal_entry" => date("Y-m-d").' '.date("H:i:s"),
+            "id_transaksi" => $id_pengadaan,
+            "id_laborat" => $brg['id_laborat'],
+            "id_barang" => $brg['id_barang'],
+            "prev_qty" =>$brg['stock'],
+            "tran_qty" => $brg['qty_approved'],
+            "balance_qty" =>$balance_qty,
+            "harga_satuan" => $brg['harga'],
+      );
+      $this->db->insert('tb_transaksi', $dataTran); 
+    }
+
     $output = array("status" => "success", "message" => "Nota Berhasil di Upload", "DOC_NO" => $id_pengadaan);
     echo json_encode($output);
+  }
+
+  public function pengadaanRpt(){
+    $id_pengadaan = $this->input->post('idpengadaan');
+
+    $data['hdr'] = $this->db->query("SELECT a.id_pengadaan, 
+    DATE_FORMAT(a.tgl_pengajuan, '%d-%b-%Y') tgl_pengajuan, b.no_induk, b.nama, 
+    a.keterangan, a.status, b.hak_akses 
+    FROM tb_pengadaan a, tb_user b
+    where a.no_induk=b.no_induk    
+    and a.id_pengadaan='".$id_pengadaan."'")->result_array();
+
+    $data['items'] = $this->db->query("SELECT a.id_barang, b.nama_barang, a.qty_pengajuan, a.qty_approved, a.harga
+    FROM tb_dtl_pengadaan a, tb_barang b
+    where a.id_barang=b.id_barang
+    and a.id_pengadaan='".$id_pengadaan."'")->result_array();
+
+    $mpdf = new \Mpdf\Mpdf(['format' => 'A4-P', 'margin_left' => '5', 'margin_right' => '5']);
+    $mpdf->setFooter('{PAGENO}');
+    $html = $this->load->view('report/pengadaanRpt',$data, true);
+    $mpdf->WriteHTML($html);
+    $mpdf->Output();
   }
 
 }

@@ -68,21 +68,14 @@
       </li>
       <?php } ?>
 
-      <?php if($this->session->userdata('hak_akses') == "siswa" or $this->session->userdata('hak_akses') == "guru"){ ?>
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="<?php echo base_url("pengaduan/addData")?>">
-            <i class="bi bi-vector-pen"></i>
-            <span>Pengaduan Kerusakan</span>
-          </a>
-        </li>
-      <?php } else{ ?>
+      
         <li class="nav-item">
           <a class="nav-link collapsed" href="<?php echo base_url("pengaduan/")?>">
             <i class="bi bi-vector-pen"></i>
             <span>Pengaduan Kerusakan</span>
           </a>
         </li>
-      <?php } ?>
+      
       <li class="nav-item">
         <a class="nav-link collapsed" href="<?php echo base_url("pengadaan/")?>">
           <i class="bi bi-journals"></i>

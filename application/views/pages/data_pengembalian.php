@@ -104,6 +104,19 @@
                     </div>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <table id="tb_dataItems" class="table table-bordered" style="font-size:12px;">
+                      <thead>
+                        <th>#</th>
+                        <th>Item No</th>
+                        <th>Description</th>
+                        <th>Jml Pinjam</th>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -185,7 +198,7 @@
                   if(data.status == "Approved"){
                     return "<button class='btn btn-sm btn-warning BTN_KEMBALI' title='Pengembalian'>Kembali</button>"
                   }else{
-                    return ""
+                    return '<button class="btn btn-sm btn-outline-success" onclick="print(\''+data.id_peminjaman+'\')"><i class="bi bi-printer"></i></button>'
                   }
                 },
                 className: "text-center"
@@ -193,6 +206,17 @@
           ]
         }
       )
+    }
+
+    function print(id_peminjaman){
+      var form = document.createElement("form");
+      $(form).attr("action", "<?php echo site_url('Peminjaman/peminjamanRpt') ?>")
+              .attr("method", "post")
+              .attr("target", "_blank");
+      $(form).html('<input type="hidden" name="idpeminjaman" value="'+id_peminjaman+'" />');
+      document.body.appendChild(form);
+      $(form).submit();
+      document.body.removeChild(form);
     }
 
 
@@ -224,12 +248,37 @@
     $("#tb_data tbody").on("click", ".BTN_KEMBALI", function() {
       event.preventDefault();
       var data = tb_data.row( $(this).parents('tr') ).data();
-      console.log(data)
+      
+      $("#tb_dataItems tbody tr").remove()
+
       $("[name='id_peminjaman']").val(data.id_peminjaman)
       $("[name='no_induk']").val(data.no_induk)
       $("[name='nama']").val(data.nama)
       $("[name='pinjam_mulai']").val(data.pinjam_mulai)
       $("[name='pinjam_sampai']").val(data.pinjam_sampai)
+
+      $.ajax({
+          url : "<?php echo site_url('Peminjaman/getDataItems') ?>",
+          type: "POST",
+          dataType: "JSON",
+          data: {
+            id_peminjaman: data.id_peminjaman
+          },
+          success: function(data){
+            
+              $.each(data, function(index, value){
+                
+                noRow = index+1;
+                var rowData = '<tr>'+
+                        '<td>'+noRow+'</td>'+
+                        '<td><input type="text" class="form-control" name="id_barang[]" value="'+value['id_barang']+'" readonly required></td>'+
+                        '<td>'+value['nama_barang']+'</td>'+
+                        '<td><input type="text" class="form-control" name="qty_approved[]" value="'+value['qty_approved']+'" readonly required ></td>'+
+                    '</tr>';
+                    $("#tb_dataItems tbody").append(rowData);
+              });
+          }
+      });
 
       $("#modal_kembali").modal('show')
     })

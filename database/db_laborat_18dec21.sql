@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 4.9.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 18 Des 2021 pada 04.57
--- Versi server: 10.4.13-MariaDB
--- Versi PHP: 7.3.19
+-- Waktu pembuatan: 17 Des 2021 pada 15.04
+-- Versi server: 10.4.10-MariaDB
+-- Versi PHP: 7.3.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -44,8 +45,8 @@ CREATE TABLE `tb_barang` (
 --
 
 INSERT INTO `tb_barang` (`id_barang`, `nama_barang`, `stock`, `stock_tersedia`, `harga_beli`, `min_stock`, `foto`, `id_kategori`, `id_laborat`) VALUES
-('LFS01FS0001', 'Jangka Sorong/caliper digital', 3, 2, 700000, 3, '1639519612241.jpg', 'FS', 'LFS01'),
-('LFS01FS0002', 'Alat Peraga Tata Surya', 2, 3, 450000, 4, '1639519654608.jpeg', 'FS', 'LFS01'),
+('LFS01FS0001', 'Jangka Sorong/caliper digital', 5, 5, 700000, 3, '1639519612241.jpg', 'FS', 'LFS01'),
+('LFS01FS0002', 'Alat Peraga Tata Surya', 3, 3, 450000, 4, '1639519654608.jpeg', 'FS', 'LFS01'),
 ('LKM01KM0001', 'GELAS KIMIA 500ML', 10, 10, 65000, 7, '1639519770999.jpg', 'KM', 'LKM01'),
 ('LKM01KM0002', 'MICROSKOP', 2, 2, 4500000, 3, '1639519816796.png', 'KM', 'LKM01');
 
@@ -62,6 +63,13 @@ CREATE TABLE `tb_bukti_pembelanjaan` (
   `tgl_upload` datetime DEFAULT NULL,
   `no_induk` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `tb_bukti_pembelanjaan`
+--
+
+INSERT INTO `tb_bukti_pembelanjaan` (`id_nota`, `id_pengadaan`, `foto_nota`, `tgl_upload`, `no_induk`) VALUES
+('12345', 'PG2021120001', '1639743645290.jpg', '2021-12-17 19:20:45', '2111123458');
 
 -- --------------------------------------------------------
 
@@ -103,7 +111,7 @@ INSERT INTO `tb_dtl_peminjaman` (`id_dtl_peminjaman`, `id_barang`, `qty_pinjam`,
 (2, 'LFS01FS0001', 2, 2, 'Selesai', 'PJ2021120001'),
 (3, 'LKM01KM0001', 2, 2, 'Proses', 'PJ2021120002'),
 (4, 'LKM01KM0002', 1, 1, 'Proses', 'PJ2021120002'),
-(5, 'LFS01FS0001', 3, 3, 'Approved', 'PJ2021120003');
+(5, 'LFS01FS0001', 3, 3, 'Proses', 'PJ2021120003');
 
 -- --------------------------------------------------------
 
@@ -233,9 +241,9 @@ CREATE TABLE `tb_peminjaman` (
 --
 
 INSERT INTO `tb_peminjaman` (`id_peminjaman`, `tgl_pengajuan`, `pinjam_mulai`, `pinjam_sampai`, `tgl_kembali`, `denda_keterlambatan`, `ket_kembali`, `keterangan`, `status`, `no_induk`, `id_periode`) VALUES
-('PJ2021120001', '2021-12-17', '2021-12-20', '2021-12-21', '2021-12-21', 0, '', 'Untuk pembelajaran', 'Selesai', '0012345678', 2),
+('PJ2021120001', '2021-12-17', '2021-12-20', '2021-12-21', '2021-12-18', 0, 'Kembali dengan keadaan baik semua', 'Untuk pembelajaran', 'Selesai', '0012345678', 2),
 ('PJ2021120002', '2021-12-17', '2021-12-17', '2021-12-17', NULL, NULL, NULL, 'Untuk Pembelajaran', 'Proses', '0012345678', 2),
-('PJ2021120003', '2021-12-17', '2021-12-17', '2021-12-20', NULL, NULL, NULL, 'Untuk Pembelajaran di kelas', 'Approved', '1234353', 2);
+('PJ2021120003', '2021-12-17', '2021-12-17', '2021-12-20', NULL, NULL, NULL, 'Untuk Pembelajaran di kelas', 'Proses', '1234353', 2);
 
 -- --------------------------------------------------------
 
@@ -269,7 +277,7 @@ CREATE TABLE `tb_pengadaan` (
 --
 
 INSERT INTO `tb_pengadaan` (`id_pengadaan`, `tgl_pengajuan`, `keterangan`, `status`, `no_induk`, `id_periode`) VALUES
-('PG2021120001', '2021-12-16', 'test 1', 'Approved kepsek', '2111123457', 2),
+('PG2021120001', '2021-12-16', 'test 1', 'Selesai', '2111123457', 2),
 ('PG2021120002', '2021-12-15', 'test', 'Proses', '0012345678', 2),
 ('PG2021120003', '2021-12-16', 'Barang rusak', 'Proses', '2111123457', 2);
 
@@ -293,7 +301,7 @@ CREATE TABLE `tb_pengaduan` (
 --
 
 INSERT INTO `tb_pengaduan` (`id_pengaduan`, `tgl_pengaduan`, `keterangan`, `status`, `no_induk`, `id_periode`) VALUES
-('AD2021120001', '2021-12-14', '', 'Approved', '0012345678', 2);
+('AD2021120001', '2021-12-14', '', 'Not Approved', '0012345678', 2);
 
 -- --------------------------------------------------------
 
@@ -332,14 +340,6 @@ CREATE TABLE `tb_transaksi` (
   `balance_qty` int(11) DEFAULT NULL,
   `harga_satuan` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data untuk tabel `tb_transaksi`
---
-
-INSERT INTO `tb_transaksi` (`tanggal_entry`, `id_transaksi`, `id_laborat`, `id_barang`, `prev_qty`, `tran_qty`, `balance_qty`, `harga_satuan`) VALUES
-('2021-12-18 10:14:57', 'AD2021120001', 'LFS01', 'LFS01FS0002', 3, -1, 2, 450000),
-('2021-12-18 10:14:57', 'AD2021120001', 'LFS01', 'LFS01FS0001', 5, -2, 3, 700000);
 
 -- --------------------------------------------------------
 

@@ -10,7 +10,6 @@
               
               <div class="row">
                 <div class="col-lg-12">
-                  <?php echo -3 ?>
                   <table class="table tb_no_top">
                     <tr>
                         <td style="width: 110px;">No Aduan</td>
@@ -420,5 +419,16 @@
       formData = "&id_pengaduan="+$("[name='id_pengaduan']").val()
       ACTION(urlPost, formData)
   })
+
+  $("#BTN_PRINT").click(function(){
+    var form = document.createElement("form");
+    $(form).attr("action", "<?php echo site_url('Pengaduan/pengaduanRpt') ?>")
+            .attr("method", "post")
+            .attr("target", "_blank");
+    $(form).html('<input type="hidden" name="idpengaduan" value="'+$("[name='id_pengaduan']").val()+'" />');
+    document.body.appendChild(form);
+    $(form).submit();
+    document.body.removeChild(form);
+  });
 
 </script>

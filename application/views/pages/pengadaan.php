@@ -61,11 +61,11 @@
                     <table class="tabel" id="tb_data" style="min-width:1200px;font-size: 12px;">
                       <thead>
                         <th style="width: 60px;"><button type="button" class="btn btn-sm btn-light" id="ADD_ITEM"><i class="bi bi-plus-square"></i></button></th>
-                        <th style="width: 170px;">Item No</th>
+                        <th style="width: 170px;">Kode Barang</th>
                         <th style="width: 60px;"></th>
-                        <th style="min-width: 300px;">Description</th>
-                        <th style="width: 150px;">Qty Pengajuan</th>
-                        <th style="width: 150px;">Qty di Setujui</th>
+                        <th style="min-width: 300px;">Deskripsi</th>
+                        <th style="width: 150px;">Jml Pengajuan</th>
+                        <th style="width: 150px;">Jml di Setujui</th>
                         <th style="width: 170px;">Harga</th>
                       </thead>
                       <tbody >

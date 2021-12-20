@@ -49,11 +49,11 @@
                     <table class="tabel" id="tb_data" style="min-width:1200px;font-size: 12px;">
                       <thead>
                         <th style="width: 60px;"><button type="button" class="btn btn-sm btn-light" id="ADD_ITEM"><i class="bi bi-plus-square"></i></button></th>
-                        <th style="width: 170px;">Item No</th>
+                        <th style="width: 170px;">Kode Barang</th>
                         <th style="width: 60px;"></th>
-                        <th style="width: 250px;">Description</th>
+                        <th style="width: 250px;">Deskripsi</th>
                         <th style="width: 90px;">Jml Rusak</th>
-                        <th style="width: 90px;">Jml Rusak Approved</th>
+                        <th style="width: 90px;">Jml Rusak</br>(disetujui)</th>
                         <th>Remark</th>
                         <?php if($this->session->userdata('hak_akses') == "laboran") echo "<th>Action</th>" ?>
                       </thead>

@@ -93,7 +93,7 @@
       <?php } ?>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
+        <a class="nav-link collapsed" href="<?php echo base_url("monitoring/")?>">
           <i class="bi bi-laptop"></i>
           <span>Monitoring Barang</span>
         </a>

@@ -55,8 +55,8 @@
                     <th >Deskripsi</th>
                     <th >Kat</th>
                     <th >Lab</th>
-                    <th >Total Stock</th>
-                    <th >Stock in Lab</th>
+                    <th >Total Stok</th>
+                    <th >Stok tersedia</br>di Lab</th>
                     <!-- <th >Harga Barang</th>
                     <th >Min Stock</th>
                     <th >Photo</th> -->
@@ -128,28 +128,28 @@
                 <div class="row">
                   <div class="col-sm-6">
                     <div class="form-group">
-                      <label>Stock</label>
-                      <input type="text" class="form-control" name="stock" required>
+                      <label>Stok</label>
+                      <input type="text" class="form-control" name="stock" onkeypress="return onlyNumberKey(event)" required>
                     </div>
                   </div>
                   <div class="col-sm-6">
                     <div class="form-group">
-                      <label>Stock Tersedia</label>
-                      <input type="text" class="form-control" name="stock_tersedia" required>
+                      <label>Stok Tersedia</label>
+                      <input type="text" class="form-control" name="stock_tersedia" onkeypress="return onlyNumberKey(event)" required>
                     </div>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-sm-6">
                     <div class="form-group">
-                      <label>Min Stock</label>
-                      <input type="text" class="form-control" name="min_stock" >
+                      <label>Min Stok</label>
+                      <input type="text" class="form-control" name="min_stock" placeholder="Minimum Stok" onkeypress="return onlyNumberKey(event)">
                     </div>
                   </div>
                   <div class="col-sm-6">
                     <div class="form-group">
                       <label>Harga Beli</label>
-                      <input type="test" class="form-control" name="harga_beli" required>
+                      <input type="test" class="form-control" name="harga_beli" onkeypress="return onlyNumberKey(event)" required>
                     </div>
                   </div>
                 </div>
@@ -165,8 +165,8 @@
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" id="BTN_SAVE">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary" id="BTN_SAVE">Simpan</button>
               </div>
             </form>
           </div>

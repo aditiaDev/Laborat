@@ -53,7 +53,7 @@
                         <th style="width: 60px;"></th>
                         <th style="width: 250px;">Deskripsi</th>
                         <th style="width: 90px;">Stok di Sistem</th>
-                        <th style="width: 90px;">Stok Actual</th>
+                        <th style="width: 90px;">Stok Aktual</th>
                         <th style="width: 90px;">Jml Barang</br>Bagus</th>
                         <th style="width: 90px;">Jml Barang</br>Jelek</th>
                       </thead>
@@ -87,7 +87,7 @@
                       <thead>
                         <th>Kode</th>
                         <th>Deskripsi</th>
-                        <th>Stock Tersedia</th>
+                        <th>Stok</th>
                         <th>Gambar</th>
                       </thead>
                       <tbody></tbody>
@@ -176,29 +176,31 @@
 
     $("[name='keterangan']").attr('disabled',param)
     $(".showItem").attr('disabled', param)
+    // $("[name='stock_sistem[]']").attr('readonly', param)
+    $("[name='stock_actual[]']").attr('readonly', param)
+    $("[name='qty_bagus[]']").attr('readonly', param)
     $("[name='qty_rusak[]']").attr('readonly', param)
-    $("[name='ket_rusak[]']").attr('readonly', param)
-    $("[name='qty_rusak_approved[]']").attr('readonly', param)
-    $("[name='status[]']").attr('readonly', param)
   }
 
   $("#BTN_NEW").click(function(){
     event.preventDefault();
-    window.location.href = '<?php echo site_url('Pengaduan/addData') ?>';
+    window.location.href = '<?php echo site_url('Monitoring/addData') ?>';
 
   })
 
   $("#BTN_EDIT").click(function(){
     event.preventDefault();
     save_method='edit';
-    id_data = $("[name='id_pengaduan']").val()
+    id_data = $("[name='id_monitoring']").val()
     BUTTON_ACTION(true)
 
     $("#BTN_SAVE").attr('disabled', false)
     $("#BTN_BATAL").attr('disabled', false)
     $("#BTN_APPROVE").attr('disabled', true)
     $("#BTN_NOT_APPROVE").attr('disabled', true)
-    $("[name='qty_rusak_approved[]']").attr('readonly', false)
+    $("[name='stock_actual[]']").attr('readonly', false)
+    $("[name='qty_bagus[]']").attr('readonly', false)
+    $("[name='qty_rusak[]']").attr('readonly', false)
   })
 
   $("#BTN_LAB").on("click",function() {
@@ -241,7 +243,7 @@
         "bDestroy": true,
         "select": true,
         "ajax": {
-            "url": "<?php echo site_url('Peminjaman/getDataBarang') ?>",
+            "url": "<?php echo site_url('Monitoring/getDataBarang') ?>",
             "type": "POST",
             "data": {
                         id_laborat: $("[name='id_laborat']").val()
@@ -249,7 +251,7 @@
         },
         "columns": [
             { "data": "id_barang" },{ "data": "nama_barang" }
-            ,{ "data": "stock_tersedia" }
+            ,{ "data": "stock" }
             ,{ "data": "foto",
               render: function (data, type, row, meta) {
                   if(data){
@@ -279,6 +281,7 @@
       if (data_not_in.indexOf(Rowdata.id_barang) < 0) {
         $("[name='id_barang[]']").eq(indexRow).val(Rowdata.id_barang);
         $("#tb_data tbody tr:eq("+indexRow+") td:eq(3)").text(Rowdata.nama_barang);
+        $("[name='stock_sistem[]']").eq(indexRow).val(Rowdata.stock);
       }else{
         alert("Item sudah ada di list");
         return;
@@ -297,9 +300,10 @@
               '<td><input type="text" class="form-control" name="id_barang[]" readonly required></td>'+
               '<td style="text-align:center;"><button class="btn btn-sm btn-outline-secondary showItem" ><i class="bi bi-list-task"></i></button></td>'+
               '<td></td>'+
-              '<td><input type="text" class="form-control" name="qty_rusak[]" onkeypress="return onlyNumberKey(event)" required ></td>'+
-              '<td><input type="text" class="form-control" name="qty_rusak_approved[]" onkeypress="return onlyNumberKey(event)" readonly required ></td>'+
-              '<td><input type="text" class="form-control" name="ket_rusak[]"  ></td>'+
+              '<td><input type="text" class="form-control" name="stock_sistem[]" readonly onkeypress="return onlyNumberKey(event)" required ></td>'+
+              '<td><input type="text" class="form-control" name="stock_actual[]" onkeypress="return onlyNumberKey(event)" required ></td>'+
+              '<td><input type="text" class="form-control" name="qty_bagus[]" onkeypress="return onlyNumberKey(event)" required></td>'+
+              '<td><input type="text" class="form-control" name="qty_rusak[]" onkeypress="return onlyNumberKey(event)" required></td>'+
           '</tr>';
     $("#tb_data tbody").append(row);
   })
@@ -317,10 +321,10 @@
     var formData = $("#FRM_DATA").serialize();
     
     if(save_method == 'save') {
-        urlPost = "<?php echo site_url('Pengaduan/saveData') ?>";
+        urlPost = "<?php echo site_url('Monitoring/saveData') ?>";
     }else{
-        urlPost = "<?php echo site_url('Pengaduan/updateData') ?>";
-        formData+="&id_pengaduan="+id_data
+        urlPost = "<?php echo site_url('Monitoring/updateData') ?>";
+        formData+="&id_monitoring="+id_data
     }
     // console.log(formData)
     ACTION(urlPost, formData)
@@ -357,14 +361,14 @@
     var arr = [];var noRow=0;var rowData = '';
       $("#tb_data tbody tr").remove();
       $.ajax({
-          url : "<?php echo site_url('Pengaduan/getDataHdr') ?>",
+          url : "<?php echo site_url('Monitoring/getDataHdr') ?>",
           type: "POST",
           dataType: "JSON",
-          data: {id_pengaduan: id},
+          data: {id_monitoring: id},
           success: function(data){
               // console.log(data);
-              $("[name='id_pengaduan']").val(data[0]['id_pengaduan']);
-              $("[name='tgl_pengaduan']").val(data[0]['tgl_pengaduan']);
+              $("[name='id_monitoring']").val(data[0]['id_monitoring']);
+              $("[name='tgl_monitoring']").val(data[0]['tgl_monitoring']);
               $("[name='no_induk']").val(data[0]['no_induk']);
               $("[name='nama']").val(data[0]['nama']);
               $("[name='status']").val(data[0]['status']);
@@ -384,11 +388,11 @@
       });
 
       $.ajax({
-          url : "<?php echo site_url('Pengaduan/getDataItems') ?>",
+          url : "<?php echo site_url('Monitoring/getDataItems') ?>",
           type: "POST",
           dataType: "JSON",
           data: {
-            id_pengaduan: id
+            id_monitoring: id
           },
           success: function(data){
             
@@ -400,13 +404,12 @@
                               '<td><input type="text" class="form-control" name="id_barang[]" value="'+value['id_barang']+'" readonly required></td>'+
                               '<td style="text-align:center;"><button class="btn btn-sm btn-outline-secondary showItem" ><i class="bi bi-list-task"></i></button></td>'+
                               '<td>'+value['nama_barang']+'</td>'+
-                              '<td><input type="text" class="form-control" name="qty_rusak[]" value="'+value['qty_rusak']+'" onkeypress="return onlyNumberKey(event)" required ></td>'+
-                              '<td><input type="text" class="form-control" name="qty_rusak_approved[]" value="'+value['qty_rusak_approved']+'"  onkeypress="return onlyNumberKey(event)" readonly required ></td>'+
-                              '<td><input type="text" class="form-control" name="ket_rusak[]"  value="'+value['ket_rusak']+'" ></td>'+
-                              '<td><select class="form-select" name="status[]"><option value="Perbaiki">Perbaiki</option><option value="Buang">Buang</option></select></td>'+
+                              '<td><input type="text" class="form-control" value="'+value['stock_sistem']+'" name="stock_sistem[]" readonly onkeypress="return onlyNumberKey(event)" required ></td>'+
+                              '<td><input type="text" class="form-control" value="'+value['stock_actual']+'" name="stock_actual[]" onkeypress="return onlyNumberKey(event)" required ></td>'+
+                              '<td><input type="text" class="form-control" value="'+value['qty_bagus']+'" name="qty_bagus[]" onkeypress="return onlyNumberKey(event)" required></td>'+
+                              '<td><input type="text" class="form-control" value="'+value['qty_rusak']+'" name="qty_rusak[]" onkeypress="return onlyNumberKey(event)" required></td>'+
                           '</tr>';
                           $("#tb_data tbody").append(rowData);
-                          $("[name='status[]']").eq(index).val(value['status'])
               });
 
               

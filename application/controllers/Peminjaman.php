@@ -159,17 +159,13 @@ class Peminjaman extends CI_Controller {
   public function updateData(){
 
     $this->load->library('form_validation');
-    $this->form_validation->set_rules('no_induk', 'NIK/NIS', 'required|numeric');
-    $this->form_validation->set_rules('nama', 'nama', 'required');
-    $this->form_validation->set_rules('alamat', 'alamat', 'required');
-    $this->form_validation->set_rules('no_telp', 'no_telp', 'required|numeric');
-    $this->form_validation->set_rules('no_wa', 'no_wa', 'required|numeric');
-    $this->form_validation->set_rules('jekel', 'jekel', 'required');
+    $this->form_validation->set_rules('tgl_pengajuan', 'Tanggal Pengajuan', 'required');
+    $this->form_validation->set_rules('no_induk', 'Nomor Induk User', 'required');
+    $this->form_validation->set_rules('pinjam_mulai', 'Pinjam Mulai', 'required');
+    $this->form_validation->set_rules('pinjam_sampai', 'Pinjam Sampai', 'required');
 
-    $this->form_validation->set_rules('username', 'Username', 'required');
-    $this->form_validation->set_rules('password', 'password', 'required|min_length[6]');
-    $this->form_validation->set_rules('hak_akses', 'hak_akses', 'required');
-    $this->form_validation->set_rules('status', 'status', 'required');
+    $this->form_validation->set_rules('id_barang[]', 'Barang', 'required');
+    $this->form_validation->set_rules('qty_pinjam[]', 'Jml Pinjam', 'required');
 
     if($this->form_validation->run() == FALSE){
       // echo validation_errors();
@@ -178,25 +174,37 @@ class Peminjaman extends CI_Controller {
       return false;
     }
 
-    $data = array(
-        "nama" => $this->input->post('nama'),
-        "alamat" => $this->input->post('alamat'),
-        "no_telp" => $this->input->post('no_telp'),
-        "no_wa" => $this->input->post('no_wa'),
-        "jekel" => $this->input->post('jekel'),
-        "username" => $this->input->post('username'),
-        "password" => $this->input->post('password'),
-        "hak_akses" => $this->input->post('hak_akses'),
-        "status" => $this->input->post('status'),
+    $dataHeader = array(
+      "tgl_pengajuan" => date("Y-m-d", strtotime($this->input->post('tgl_pengajuan'))),
+      "pinjam_mulai" => date("Y-m-d", strtotime($this->input->post('pinjam_mulai'))),
+      "pinjam_sampai" => date("Y-m-d", strtotime($this->input->post('pinjam_sampai'))),
+      "keterangan" => $this->input->post('keterangan'),
     );
-    $this->db->where('no_induk', $this->input->post('no_induk'));
-    $this->db->update('tb_user', $data);
+    $this->db->where('id_peminjaman', $this->input->post('id_peminjaman'));
+    $this->db->update('tb_peminjaman', $dataHeader);
+
+    $this->db->where('id_peminjaman', $this->input->post('id_peminjaman'));
+    $this->db->delete('tb_dtl_peminjaman');
+
+    foreach($this->input->post('id_barang') as $key => $each){
+      $dataDtl[] = array(
+        "id_peminjaman" => $this->input->post('id_peminjaman'),
+        "id_barang" => $this->input->post('id_barang')[$key],
+        "qty_pinjam" => $this->input->post('qty_pinjam')[$key],
+        "qty_approved" => $this->input->post('qty_pinjam')[$key],
+        "status" => "Proses",
+      );
+    }
+
+    $this->db->insert_batch('tb_dtl_peminjaman', $dataDtl);
+
+    
     if($this->db->error()['message'] != ""){
       $output = array("status" => "error", "message" => $this->db->error()['message']);
       echo json_encode($output);
       return false;
     }
-    $output = array("status" => "success", "message" => "Data Berhasil di Update");
+    $output = array("status" => "success", "message" => "Data Berhasil di Update", "DOC_NO" => $this->input->post('id_peminjaman'));
     echo json_encode($output);
   }
 

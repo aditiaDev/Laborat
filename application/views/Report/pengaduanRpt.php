@@ -9,7 +9,7 @@
 <div id="container">
 	<h3>Laporan Pengaduan Kerusakan Alat</h3>
 	<hr>
-    <table  style="font-size:14px;border: 1px solid #ddd;border-collapse: collapse;">
+    <table  style="font-size:14px;">
 	  	<tbody>
 		  	<tr>
 				<td style="width:110px">Document No.</td>
@@ -39,7 +39,7 @@
 	<table border=1 style='font-size:12px; border-collapse:collapse;margin-left:5px;margin-top:15px; align:center;' width='100%'>
 		<tr bgcolor='#9d9f9c'>
 			<td style='color:white;font-family:calibri;font-size:12px;width:40px;height:15px;' align='center'>NO</td>
-			<td style='color:white;font-family:calibri;font-size:12px;width:250px;' align='center'>ITEM CODE / DESCRIPTION</td>
+			<td style='color:white;font-family:calibri;font-size:12px;width:250px;' align='center'>Kode Barang / Deskripsi</td>
 			<td style='color:white;font-family:calibri;font-size:12px;width:80px;' align='center'>JML RUSAK<br>(USER)</td>
 			<td style='color:white;font-family:calibri;font-size:12px;width:80px;' align='center'>REAL RUSAK<br>(LABORAN)</td>
             <td style='color:white;font-family:calibri;font-size:12px;' align='center'>KETERANGAN</td>

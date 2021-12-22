@@ -92,4 +92,82 @@ class Monitoring extends CI_Controller {
     $this->load->view('template/footer');
   }
 
+  public function saveData(){
+
+    $this->load->library('form_validation');
+    $this->form_validation->set_rules('tgl_monitoring', 'Tanggal Monitoring', 'required');
+    $this->form_validation->set_rules('no_induk', 'Nomor Induk User', 'required');
+
+    $this->form_validation->set_rules('id_barang[]', 'Barang', 'required');
+    $this->form_validation->set_rules('stock_actual[]', 'Stok Aktual', 'required');
+    $this->form_validation->set_rules('qty_bagus[]', 'Jml yang Bagus', 'required');
+    $this->form_validation->set_rules('qty_rusak[]', 'Jml yang jelek', 'required');
+
+    if($this->form_validation->run() == FALSE){
+      // echo validation_errors();
+      $output = array("status" => "error", "message" => validation_errors());
+      echo json_encode($output);
+      return false;
+    }
+
+    $unik = 'MN'.date('Ym', strtotime($this->input->post('tgl_monitoring')));
+    $kode = $this->db->query("select MAX(id_monitoring) LAST_NO from tb_monitoring WHERE id_monitoring LIKE '".$unik."%'")->row()->LAST_NO;
+    
+    $urutan = (int) substr($kode, -4);
+    $urutan++;
+    $kode = $unik . sprintf("%04s", $urutan);
+    
+    $id_periode = $this->db->query("SELECT max(id_periode) id_periode FROM tb_periode where status='Aktif'")->row()->id_periode;
+    
+    $dataHeader = array(
+              "id_monitoring" => $kode,
+              "tgl_monitoring" => date("Y-m-d", strtotime($this->input->post('tgl_monitoring'))).' '.date("H:i:s"),
+              "keterangan" => $this->input->post('keterangan'),
+              "status" => "Proses",
+              "no_induk" => $this->session->userdata('no_induk'),
+              "id_periode" => $id_periode,
+            );
+    $this->db->insert('tb_monitoring', $dataHeader);
+
+
+    foreach($this->input->post('id_barang') as $key => $each){
+      $dataDtl[] = array(
+        "id_monitoring" => $kode,
+        "id_barang" => $this->input->post('id_barang')[$key],
+        "stock_sistem" => $this->input->post('stock_sistem')[$key],
+        "stock_actual" => $this->input->post('stock_actual')[$key],
+        "qty_bagus" => $this->input->post('qty_bagus')[$key],
+        "qty_rusak" => $this->input->post('qty_rusak')[$key],
+      );
+    }
+
+    $this->db->insert_batch('tb_dtl_monitoring', $dataDtl);
+
+    $output = array("status" => "success", "message" => "Data Berhasil Disimpan", "DOC_NO" => $kode);
+    echo json_encode($output);
+
+  }
+
+  public function monitoringRpt(){
+    $id_monitoring = $this->input->post('idmonitoring');
+
+    $data['hdr'] = $this->db->query("SELECT a.id_monitoring, 
+    DATE_FORMAT(a.tgl_monitoring, '%d-%b-%Y') tgl_monitoring, b.no_induk, b.nama, 
+    REPLACE(a.keterangan,chr(13),'<br>') keterangan, a.status, b.hak_akses 
+    FROM tb_monitoring a, tb_user b
+    where a.no_induk=b.no_induk    
+    and a.id_monitoring='".$id_monitoring."'")->result_array();
+
+    $data['items'] = $this->db->query("SELECT a.id_barang, b.nama_barang, a.stock_sistem, a.stock_actual, a.qty_bagus, a.qty_rusak 
+    FROM tb_dtl_monitoring a, tb_barang b
+    where a.id_barang=b.id_barang
+    and a.id_monitoring='".$id_monitoring."'")->result_array();
+
+    $mpdf = new \Mpdf\Mpdf(['format' => 'A4-P', 'margin_left' => '5', 'margin_right' => '5']);
+    $mpdf->setFooter('{PAGENO}');
+    $html = $this->load->view('report/monitoringRpt',$data, true);
+    $mpdf->WriteHTML($html);
+    $mpdf->Output();
+  }
+
 }

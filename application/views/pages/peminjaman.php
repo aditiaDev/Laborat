@@ -351,7 +351,6 @@
         urlPost = "<?php echo site_url('Peminjaman/saveData') ?>";
     }else{
         urlPost = "<?php echo site_url('Peminjaman/updateData') ?>";
-        formData+="&id_peminjaman="+id_data
     }
     // console.log(formData)
     ACTION(urlPost, formData)
@@ -475,5 +474,15 @@
     $(form).submit();
     document.body.removeChild(form);
   });
+
+
+  $("#BTN_DELETE").click(function(){
+    if(!confirm('Delete this data?')) return
+
+      urlPost = "<?php echo site_url('Peminjaman/deleteData') ?>";
+      formData = "id_peminjaman="+$("[name='id_peminjaman']").val()
+      ACTION(urlPost, formData)
+      window.location.href = '<?php echo site_url('Peminjaman/') ?>';
+  })
 
 </script>

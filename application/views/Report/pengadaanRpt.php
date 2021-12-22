@@ -9,7 +9,7 @@
 <div id="container">
 	<h3>Permohonan Pengadaan Alat</h3>
 	<hr>
-    <table  style="font-size:14px;border: 1px solid #ddd;border-collapse: collapse;">
+    <table  style="font-size:14px;">
 	  	<tbody>
 		  	<tr>
 				<td style="width:110px">Document No.</td>
@@ -39,8 +39,8 @@
 	<table border=1 style='font-size:12px; border-collapse:collapse;margin-left:5px;margin-top:15px; align:center;' width='100%'>
 		<tr bgcolor='#9d9f9c'>
 			<td style='color:white;font-family:calibri;font-size:12px;width:40px;height:15px;' align='center'>NO</td>
-			<td style='color:white;font-family:calibri;font-size:12px;width:350px;' align='center'>ITEM CODE / DESCRIPTION</td>
-			<td style='color:white;font-family:calibri;font-size:12px;width:80px;' align='center'>QTY<br>REQUESTED</td>
+			<td style='color:white;font-family:calibri;font-size:12px;width:350px;' align='center'>Kode Barang / Deskripsi</td>
+			<td style='color:white;font-family:calibri;font-size:12px;width:80px;' align='center'>QTY<br>REQUEST</td>
 			<td style='color:white;font-family:calibri;font-size:12px;width:80px;' align='center'>QTY<br>APPROVE</td>
             <td style='color:white;font-family:calibri;font-size:12px;' align='center'>LAST PRICE</td>
 		</tr>

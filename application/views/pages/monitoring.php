@@ -418,5 +418,16 @@
       });
   }
 
+  $("#BTN_PRINT").click(function(){
+    var form = document.createElement("form");
+    $(form).attr("action", "<?php echo site_url('Monitoring/monitoringRpt') ?>")
+            .attr("method", "post")
+            .attr("target", "_blank");
+    $(form).html('<input type="hidden" name="idmonitoring" value="'+$("[name='id_monitoring']").val()+'" />');
+    document.body.appendChild(form);
+    $(form).submit();
+    document.body.removeChild(form);
+  });
+
 
 </script>

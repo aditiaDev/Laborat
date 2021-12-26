@@ -320,6 +320,12 @@
         url: urlPost,
         type: "POST",
         data: formData,
+        beforeSend: function(){
+          $("#LOADER").show();
+        },
+        complete: function(){
+          $("#LOADER").hide();
+        },
         dataType: "JSON",
         success: function(data){
           console.log(data)

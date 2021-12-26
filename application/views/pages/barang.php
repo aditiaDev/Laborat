@@ -43,10 +43,7 @@
                   </tr>
                 </table>
               </div>
-              <?php
-                // print_r($kategori);
-                // print_r($laborat);
-              ?>
+           
               <table id="tb_data" class="table table-bordered table-striped" style="font-size:12px;">
                 <thead>
                   <tr style="text-align: center;">
@@ -57,6 +54,7 @@
                     <th >Lab</th>
                     <th >Total Stok</th>
                     <th >Stok tersedia</br>di Lab</th>
+                    <th >Min Stock</th>
                     <!-- <th >Harga Barang</th>
                     <th >Min Stock</th>
                     <th >Photo</th> -->
@@ -228,6 +226,14 @@
                 "id_laborat" : $("[name='src_laborat']").val()
               }
           },
+          "createdRow": function( row, data, dataIndex){
+            console.log($(row))
+                if( parseInt(data.stock) <= parseInt(data.min_stock)){
+
+                    $(row).css({"background-color":"yellow"});
+
+                }
+            },
           "columns": [
               {
                 "className":      'dt-control',
@@ -242,7 +248,7 @@
               { "data": "stock"},
               { "data": "stock_tersedia"},
               // { "data": "harga_beli"},
-              // { "data": "min_stock"},
+              { "data": "min_stock"},
               // { "data": "foto"},
               { "data": null, 
                 "render" : function(data){

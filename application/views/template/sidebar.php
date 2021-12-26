@@ -8,12 +8,13 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
+        <a class="nav-link collapsed" href="<?php echo base_url("home/")?>">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
       </li><!-- End Dashboard Nav -->
 
+      <?php if($this->session->userdata('hak_akses') <> "siswa"){ ?>
       <li class="nav-heading">Master</li>
 
       <li class="nav-item">
@@ -21,6 +22,7 @@
           <i class="bi bi-menu-button-wide"></i><span>Master Data</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <?php if($this->session->userdata('hak_akses') == "kepsek"){ ?>
           <li>
             <a href="<?php echo base_url("user/")?>">
               <i class="bi bi-circle"></i><span>Data User</span>
@@ -31,16 +33,20 @@
               <i class="bi bi-circle"></i><span>Periode Pendidikan</span>
             </a>
           </li>
+          <?php } ?>
+          <?php if($this->session->userdata('hak_akses') == "kepsek" or $this->session->userdata('hak_akses') == "sarpras"){ ?>
           <li>
             <a href="<?php echo base_url("laborat/")?>">
               <i class="bi bi-circle"></i><span>Data Laborat</span>
             </a>
           </li>
+          
           <li>
             <a href="<?php echo base_url("kategori/")?>">
               <i class="bi bi-circle"></i><span>Kategori Barang</span>
             </a>
           </li>
+          <?php } ?>
           <li>
             <a href="<?php echo base_url("barang/")?>">
               <i class="bi bi-circle"></i><span>Master Barang</span>
@@ -48,7 +54,7 @@
           </li>
         </ul>
       </li>
-
+      <?php } ?>
 
       <li class="nav-heading">Transaksi</li>
 
@@ -68,14 +74,24 @@
       </li>
       <?php } ?>
 
-      
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="<?php echo base_url("pengaduan/")?>">
-            <i class="bi bi-vector-pen"></i>
-            <span>Pengaduan Kerusakan</span>
-          </a>
-        </li>
-      
+      <?php if($this->session->userdata('hak_akses') == "siswa" or $this->session->userdata('hak_akses') == "guru" or $this->session->userdata('hak_akses') == "laboran"){ ?>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="<?php echo base_url("pengaduan/")?>">
+          <i class="bi bi-vector-pen"></i>
+          <span>Pengaduan Kerusakan</span>
+        </a>
+      </li>
+      <?php } ?>
+
+      <?php if($this->session->userdata('hak_akses') == "laboran" or $this->session->userdata('hak_akses') == "sarpras"){ ?>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="<?php echo base_url("monitoring/")?>">
+          <i class="bi bi-laptop"></i>
+          <span>Monitoring Barang</span>
+        </a>
+      </li>
+      <?php } ?>
+
       <li class="nav-item">
         <a class="nav-link collapsed" href="<?php echo base_url("pengadaan/")?>">
           <i class="bi bi-journals"></i>
@@ -92,13 +108,7 @@
       </li>
       <?php } ?>
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="<?php echo base_url("monitoring/")?>">
-          <i class="bi bi-laptop"></i>
-          <span>Monitoring Barang</span>
-        </a>
-      </li>
-
+      <?php if($this->session->userdata('hak_akses') == "bendahara" or $this->session->userdata('hak_akses') == "kepsek"){ ?>
       <li class="nav-heading">Report</li>
 
       <li class="nav-item">
@@ -128,6 +138,7 @@
           </li>
         </ul>
       </li>
+      <?php } ?>
 
       <li class="nav-heading">More</li>
 

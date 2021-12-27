@@ -45,14 +45,8 @@ class Login extends CI_Controller {
     redirect('/', 'refresh');
   }
 
-  public function register($id=null){
-    if(!$id) redirect('/');
-    $this->db->select('id_lowongan_kerja, nm_lowongan_kerja');
-    $this->db->from('tb_lowongan_kerja');
-    $this->db->where('id_lowongan_kerja', $id);
-    $data['data'] = $this->db->get()->row();
-    // print_r($data);
-    $this->load->view('register', $data);
+  public function register(){
+    $this->load->view('register');
   }
 
   public function signUp(){

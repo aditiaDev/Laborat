@@ -117,7 +117,7 @@
         </a>
         <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="#">
+            <a href="<?php echo base_url("Laporan/peminjaman")?>">
               <i class="bi bi-circle"></i><span>Peminjaman Alat</span>
             </a>
           </li>

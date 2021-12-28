@@ -247,6 +247,7 @@
 
     $("#tb_data tbody").on("click", ".BTN_KEMBALI", function() {
       event.preventDefault();
+      $("#FRM_DATA")[0].reset()
       var data = tb_data.row( $(this).parents('tr') ).data();
       
       $("#tb_dataItems tbody tr").remove()

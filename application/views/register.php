@@ -132,10 +132,10 @@
                     </div>
 
                     <div class="col-6">
-                      <a class="btn btn-warning w-100" href="<?php echo base_url("Login/")?>">Login</a>
+                      <a class="btn btn-warning w-100" href="<?php echo base_url("Login/")?>">Login Page</a>
                     </div>
                     <div class="col-6">
-                      <button class="btn btn-primary w-100" type="submit">Buat Akun</button>
+                      <button class="btn btn-primary w-100" type="button" id="btnSave">Buat Akun</button>
                     </div>
 
                   </form>
@@ -167,19 +167,19 @@
     }
 
     $(function(){
-      $("#FRM_DATA").submit(function(event){
-
+      $("#btnSave").click(function(){
         event.preventDefault();
-        var formData = $(this).serialize();
+        var formData = $("#FRM_DATA").serialize();
         $.ajax({
-            url: "<?php echo site_url('Login/login') ?>",
+            url: "<?php echo site_url('Login/signUp') ?>",
             type: "POST",
             data: formData,
             dataType: "JSON",
             success: function(data){
               // console.log(data)
               if (data.status == "success") {
-                window.location="<?php echo base_url('home');?>"
+                alert("Pendaftaran Berhasil")
+                window.location="<?php echo base_url('login');?>"
               }else{
                 toastr.error(data.message)
               }

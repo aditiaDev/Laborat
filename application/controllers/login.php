@@ -49,19 +49,19 @@ class Login extends CI_Controller {
     $this->load->view('register');
   }
 
+
   public function signUp(){
     $this->load->library('form_validation');
-    $this->form_validation->set_rules('id_lowongan_kerja', 'Lowongan Kerja', 'required');
-    $this->form_validation->set_rules('nm_pelamar', 'Nama Pelamar', 'required');
-    $this->form_validation->set_rules('alamat_pelamar', 'Alamat', 'required');
-    $this->form_validation->set_rules('no_tlp', 'No Telphone', 'required');
-    $this->form_validation->set_rules('lulusan', 'Pendidikan', 'required');
-    $this->form_validation->set_rules('jurusan', 'Jurusan', 'required');
-    $this->form_validation->set_rules('jenis_kelamin', 'Jenis Kelamin', 'required');
-    $this->form_validation->set_rules('kemampuan', 'Kemampuan', 'required');
+    $this->form_validation->set_rules('no_induk', 'NIK/NIS', 'required|numeric|is_unique[tb_user.no_induk]');
+    $this->form_validation->set_rules('nama', 'nama', 'required');
+    $this->form_validation->set_rules('alamat', 'alamat', 'required');
+    $this->form_validation->set_rules('no_telp', 'no_telp', 'required|numeric');
+    $this->form_validation->set_rules('no_wa', 'no_wa', 'required|numeric');
+    $this->form_validation->set_rules('jekel', 'jekel', 'required');
 
     $this->form_validation->set_rules('username', 'Username', 'required|is_unique[tb_user.username]');
-    $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
+    $this->form_validation->set_rules('password', 'password', 'required|min_length[6]');
+    $this->form_validation->set_rules('hak_akses', 'hak_akses', 'required');
 
     if($this->form_validation->run() == FALSE){
       // echo validation_errors();
@@ -69,32 +69,27 @@ class Login extends CI_Controller {
       echo json_encode($output);
       return false;
     }
-
-    $dataUser = array(
-              "username" => $this->input->post('username'),
-              "password" => $this->input->post('password'),
-              "level" => "calon_pelamar",
-            );
-    $this->db->insert('tb_user', $dataUser);
-
-    $id_user = $this->db->query("SELECT id_user FROM tb_user 
-                                WHERE username='".$this->input->post('username')."' 
-                                AND `password`='".$this->input->post('password')."' 
-                                LIMIT 1")->row()->id_user;
-
     
     $data = array(
-              "id_lowongan_kerja" => $this->input->post('id_lowongan_kerja'),
-              "nm_pelamar" => $this->input->post('nm_pelamar'),
-              "jenis_kelamin" => $this->input->post('jenis_kelamin'),
-              "alamat_pelamar" => $this->input->post('alamat_pelamar'),
-              "no_tlp" => $this->input->post('no_tlp'),
-              "lulusan" => $this->input->post('lulusan'),
-              "jurusan" => $this->input->post('jurusan'),
-              "kemampuan" => $this->input->post('kemampuan'),
-              "id_user" => $id_user,
+              "no_induk" => $this->input->post('no_induk'),
+              "nama" => $this->input->post('nama'),
+              "alamat" => $this->input->post('alamat'),
+              "no_telp" => $this->input->post('no_telp'),
+              "no_wa" => $this->input->post('no_wa'),
+              "jekel" => $this->input->post('jekel'),
+              "username" => $this->input->post('username'),
+              "password" => $this->input->post('password'),
+              "hak_akses" => $this->input->post('hak_akses'),
+              "status" => "Aktif",
             );
-    $this->db->insert('tb_pelamar', $data);
+    $this->db->insert('tb_user', $data);
+
+    $data = array(
+          "no_induk" => $this->input->post('no_induk'),
+          "tgl_daftar" => date("Y-m-d"),
+        );
+    $this->db->insert('tb_pendaftaran', $data);
+
     $output = array("status" => "success", "message" => "Data Berhasil Disimpan");
     echo json_encode($output);
   }

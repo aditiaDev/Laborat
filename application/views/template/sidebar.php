@@ -122,7 +122,7 @@
             </a>
           </li>
           <li>
-            <a href="#">
+            <a href="<?php echo base_url("Laporan/pengadaan")?>">
               <i class="bi bi-circle"></i><span>Pengadaan Barang</span>
             </a>
           </li>

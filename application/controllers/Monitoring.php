@@ -170,4 +170,41 @@ class Monitoring extends CI_Controller {
     $mpdf->Output();
   }
 
+  public function approve(){
+    $id_monitoring = $this->input->post('id_monitoring');
+    $this->db->set('status', 'Approved');
+    $this->db->where('id_monitoring', $id_monitoring);
+    $this->db->update('tb_monitoring');
+
+    $this->db->set('status', 'Approved');
+    $this->db->where('id_monitoring', $id_monitoring);
+    $this->db->update('tb_dtl_monitoring');
+
+    
+
+    foreach($this->input->post('id_barang') as $key => $each){
+      $id_barang = $this->input->post('id_barang')[$key];
+      $this->db->query("UPDATE tb_barang SET stock=".$this->input->post('stock_actual')[$key]." WHERE id_barang='".$id_barang."'");
+    }
+
+    $output = array("status" => "success", "message" => "Document berhasil di Approve", "DOC_NO" => $id_monitoring);
+    echo json_encode($output);
+
+  }
+
+  public function notApprove(){
+
+    $id_monitoring = $this->input->post('id_monitoring');
+    $this->db->set('status', 'Not Approved');
+    $this->db->where('id_monitoring', $id_monitoring);
+    $this->db->update('tb_monitoring');
+
+    $this->db->set('status', 'Not Approved');
+    $this->db->where('id_monitoring', $id_monitoring);
+    $this->db->update('tb_dtl_monitoring');
+
+    $output = array("status" => "success", "message" => "Document tidak terapprove", "DOC_NO" => $id_monitoring);
+    echo json_encode($output);
+  }
+
 }

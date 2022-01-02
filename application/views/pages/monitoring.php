@@ -429,5 +429,23 @@
     document.body.removeChild(form);
   });
 
+  $("#BTN_APPROVE").click(function(){
+    if(!confirm('Approve this document?')) return
+      var id_monitoring = $("[name='id_monitoring']").val()
+      urlPost = "<?php echo site_url('Monitoring/approve') ?>";
+      var formData = $("#FRM_DATA").serialize();
+      // formData += "id_peminjaman="+id_peminjaman
+      ACTION(urlPost, formData)
+      
+  })
+
+  $("#BTN_NOT_APPROVE").click(function(){
+    if(!confirm('Not Approve this document?')) return
+
+      urlPost = "<?php echo site_url('Monitoring/notApprove') ?>";
+      formData = "id_monitoring="+$("[name='id_monitoring']").val()
+      ACTION(urlPost, formData)
+  })
+
 
 </script>

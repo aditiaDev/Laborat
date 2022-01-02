@@ -14,8 +14,8 @@
         </a>
       </li><!-- End Dashboard Nav -->
 
-      <?php if($this->session->userdata('hak_akses') <> "siswa"){ ?>
-      <li class="nav-heading">Master</li>
+      <?php if($this->session->userdata('hak_akses') <> "siswa" and $this->session->userdata('hak_akses') <> "guru"){ ?>
+      <li class="nav-heading">Master </li>
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">
@@ -127,12 +127,12 @@
             </a>
           </li>
           <li>
-            <a href="#">
+            <a href="<?php echo base_url("Laporan/monitoring")?>">
               <i class="bi bi-circle"></i><span>Monitoring Barang</span>
             </a>
           </li>
           <li>
-            <a href="#">
+            <a href="<?php echo base_url("Laporan/pengaduan")?>">
               <i class="bi bi-circle"></i><span>Pengaduan Kerusakan</span>
             </a>
           </li>
@@ -142,12 +142,12 @@
 
       <li class="nav-heading">More</li>
 
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a class="nav-link collapsed" href="users-profile.html">
           <i class="bi bi-person"></i>
           <span>Profile</span>
         </a>
-      </li>
+      </li> -->
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="<?php echo base_url("Login/logout")?>">

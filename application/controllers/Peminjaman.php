@@ -191,7 +191,7 @@ class Peminjaman extends CI_Controller {
         "id_peminjaman" => $this->input->post('id_peminjaman'),
         "id_barang" => $this->input->post('id_barang')[$key],
         "qty_pinjam" => $this->input->post('qty_pinjam')[$key],
-        "qty_approved" => $this->input->post('qty_pinjam')[$key],
+        "qty_approved" => $this->input->post('qty_approved')[$key],
         "status" => "Proses",
       );
     }

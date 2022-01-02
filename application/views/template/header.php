@@ -176,7 +176,9 @@
             <i class="bi bi-search"></i>
           </a>
         </li><!-- End Search Icon-->
-
+        <?php 
+          if($this->session->userdata('hak_akses') <> "siswa" and $this->session->userdata('hak_akses') <> "guru"){
+        ?>
         <li class="nav-item dropdown">
 
           <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
@@ -189,6 +191,7 @@
             $pengadaan= $this->db->query("SELECT count(*) jml FROM tb_pengadaan where status='Proses'")->row()->jml;
             $peminjaman = $this->db->query("SELECT count(*) jml FROM tb_peminjaman where status='Approved' and pinjam_sampai<sysdate()")->row()->jml;
             $stock = $this->db->query("SELECT count(*) jml FROM tb_barang where stock<=min_stock")->row()->jml;
+            
           ?>
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
@@ -226,7 +229,7 @@
           </ul><!-- End Notification Dropdown Items -->
 
         </li><!-- End Notification Nav -->
-
+        <?php } ?>
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">

@@ -219,7 +219,7 @@
           "autoWidth": false,
           "responsive": true,
           "ajax": {
-              "url": "<?php echo site_url('barang/getAllData') ?>",
+              "url": "<?php echo site_url('barang/getAllDataByUser') ?>",
               "type": "POST",
               "data": {
                 "id_kategori" : $("[name='src_kategori']").val(),

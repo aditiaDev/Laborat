@@ -123,6 +123,17 @@ class Pengadaan extends CI_Controller {
 
     $this->db->insert_batch('tb_dtl_pengadaan', $dataDtl);
 
+    $sql = $this->db->query("SELECT no_wa, SYSDATE() hari_ini FROM tb_user A, tb_laboran B WHERE A.hak_akses='laboran' AND A.status='Aktif'
+    AND A.no_induk=B.no_induk
+    AND b.id_laborat='".$this->input->post('id_laborat')."'")->result_array();
+
+    foreach($sql as $row){
+      $no_wa = $row['no_wa'];
+      $message = "Ada Pengajuan Pengadaan Barang baru dengan no Dokumen ".$kode." pada tanggal ".$row['hari_ini'];
+      $this->zenziva_api($no_wa, $message);
+
+    }
+
     $output = array("status" => "success", "message" => "Data Berhasil Disimpan", "DOC_NO" => $kode);
     echo json_encode($output);
 
@@ -344,6 +355,30 @@ class Pengadaan extends CI_Controller {
     $html = $this->load->view('report/pengadaanRpt',$data, true);
     $mpdf->WriteHTML($html);
     $mpdf->Output();
+  }
+
+  function zenziva_api($no_wa, $message){
+    $userkey = "8jhyem";
+    $passkey = "n65hmpn9lo";
+    $url = "https://console.zenziva.net/wareguler/api/sendWA/";
+
+    $curlHandle = curl_init();
+    curl_setopt($curlHandle, CURLOPT_URL, $url);
+    curl_setopt($curlHandle, CURLOPT_HEADER, 0);
+    curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
+    curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($curlHandle, CURLOPT_TIMEOUT, 30);
+    curl_setopt($curlHandle, CURLOPT_POST, 1);
+    curl_setopt($curlHandle, CURLOPT_POSTFIELDS, array(
+      'userkey' => $userkey,
+      'passkey' => $passkey,
+      'to' => $no_wa,
+      'message' => $message
+    ));
+    $results = json_decode(curl_exec($curlHandle), true);
+    curl_close($curlHandle);
+    return $results['text'];
   }
 
 }

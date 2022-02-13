@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 02 Jan 2022 pada 12.47
+-- Waktu pembuatan: 13 Feb 2022 pada 15.23
 -- Versi server: 10.4.10-MariaDB
 -- Versi PHP: 7.3.12
 
@@ -132,7 +132,8 @@ INSERT INTO `tb_dtl_peminjaman` (`id_dtl_peminjaman`, `id_barang`, `qty_pinjam`,
 (18, 'LFS01FS0001', 1, 1, 'Selesai', 'PJ2022010001'),
 (27, 'LFS01FS0002', 2, 2, 'Proses', 'PJ2022010003'),
 (32, 'LFS01FS0002', 3, 1, 'Selesai', 'PJ2022010004'),
-(33, 'LFS01FS0001', 2, 2, 'Selesai', 'PJ2022010004');
+(33, 'LFS01FS0001', 2, 2, 'Selesai', 'PJ2022010004'),
+(34, 'LFS01FS0001', 2, 2, 'Proses', 'PJ2022020001');
 
 -- --------------------------------------------------------
 
@@ -187,7 +188,9 @@ INSERT INTO `tb_dtl_pengaduan` (`id_dtl_pengaduan`, `id_barang`, `qty_rusak`, `q
 (2, 'LFS01FS0001', 2, 2, 'Perlu kalibrasi ulang', 'Buang', 'AD2021120001'),
 (3, 'LFS01FS0002', 1, 1, 'Perlu di lem ulang', NULL, 'AD2021120002'),
 (4, 'LFS01FS0002', 1, 1, 'Planet Merkurius lepas', 'Perbaiki', 'AD2022010001'),
-(5, 'LKM01KM0001', 1, 1, 'Tabung kaca retak', 'Perbaiki', 'AD2022010002');
+(5, 'LKM01KM0001', 1, 1, 'Tabung kaca retak', 'Perbaiki', 'AD2022010002'),
+(6, 'LFS01FS0002', 1, 1, 'rusaks', NULL, 'AD2022020001'),
+(7, 'LKM01KM0001', 2, 2, 'retak', NULL, 'AD2022020002');
 
 -- --------------------------------------------------------
 
@@ -207,6 +210,26 @@ CREATE TABLE `tb_kategori` (
 INSERT INTO `tb_kategori` (`id_kategori`, `deskripsi`) VALUES
 ('FS', 'ALAT FISIKA'),
 ('KM', 'ALAT KIMIA');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `tb_laboran`
+--
+
+CREATE TABLE `tb_laboran` (
+  `id` int(11) NOT NULL,
+  `no_induk` varchar(30) DEFAULT NULL,
+  `id_laborat` varchar(25) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `tb_laboran`
+--
+
+INSERT INTO `tb_laboran` (`id`, `no_induk`, `id_laborat`) VALUES
+(1, '2111123457', 'LFS01'),
+(2, '2111123459', 'LKM01');
 
 -- --------------------------------------------------------
 
@@ -285,7 +308,8 @@ INSERT INTO `tb_peminjaman` (`id_peminjaman`, `tgl_pengajuan`, `pinjam_mulai`, `
 ('PJ2021120004', '2021-12-25', '2021-12-24', '2021-12-26', '2021-12-28', 10000, '', 'Untuk pembelajaran di luar jam kelas', 'Selesai', '0012345678', 2),
 ('PJ2022010001', '2022-01-02', '2022-01-03', '2022-01-04', '2022-01-04', 0, '', '', 'Selesai', '12345678', 2),
 ('PJ2022010003', '2022-01-02', '2022-01-04', '2022-01-04', NULL, NULL, NULL, '', 'Proses', '0012345678', 2),
-('PJ2022010004', '2022-01-02', '2022-01-03', '2022-01-04', '2022-01-04', 0, '', 'Untuk pembelajaran di luar kelas', 'Selesai', '201450399', 2);
+('PJ2022010004', '2022-01-02', '2022-01-03', '2022-01-04', '2022-01-04', 0, '', 'Untuk pembelajaran di luar kelas', 'Selesai', '201450399', 2),
+('PJ2022020001', '2022-02-13', '2022-02-13', '2022-02-14', NULL, NULL, NULL, 'test pinjam', 'Proses', '1234353', 2);
 
 -- --------------------------------------------------------
 
@@ -355,7 +379,9 @@ INSERT INTO `tb_pengaduan` (`id_pengaduan`, `tgl_pengaduan`, `keterangan`, `stat
 ('AD2021120001', '2021-12-14', '', 'Proses', '0012345678', 2),
 ('AD2021120002', '2021-12-26', 'Lepas 1 Planet', 'Proses', '0012345678', 2),
 ('AD2022010001', '2022-01-02', '', 'Approved', '1234353', 2),
-('AD2022010002', '2022-01-02', '', 'Approved', '1234353', 2);
+('AD2022010002', '2022-01-02', '', 'Approved', '1234353', 2),
+('AD2022020001', '2022-02-13', 'test', 'Proses', '0012345678', 2),
+('AD2022020002', '2022-02-13', 'test', 'Proses', '0012345678', 2);
 
 -- --------------------------------------------------------
 
@@ -431,11 +457,12 @@ INSERT INTO `tb_user` (`no_induk`, `nama`, `alamat`, `no_telp`, `no_wa`, `jekel`
 ('1234353', 'TEST edit', 'Alamat edit', '085446546542', '085643520576', 'Perempuan', 'guru', 'guru', 'guru', 'Aktif'),
 ('12345678', 'JOKO SUSILO', 'KUDUS', '0856435764', '0856435764', 'Laki-laki', 'siswa2', 'siswa2', 'siswa', 'Aktif'),
 ('201450399', 'Ulya Fathruhahman', 'Pati', '085643520576', '085643520576', 'Laki-laki', 'siswa3', 'siswa3', 'siswa', 'Aktif'),
-('2100123456', 'Chandra Asih', 'Jln. Pemuda no 23, Semarang', '08512376871', '08512376871', 'Perempuan', 'sarpras', 'sarpras', 'sarpras', 'Tidak Aktif'),
+('2100123456', 'Chandra Asih', 'Jln. Pemuda no 23, Semarang', '08512376871', '081299534339', 'Perempuan', 'sarpras', 'sarpras', 'sarpras', 'Aktif'),
 ('2111123456', 'Subejo, M.H', 'Jln. Merpati no 12, Pati', '0813247688112', '0813247688112', 'Laki-laki', 'kepsek', 'kepsek', 'kepsek', 'Aktif'),
 ('2111123457', 'Tresna, M.H', 'Jln. Merpati no 12, Pati', '0813247688113', '085643520576', 'Laki-laki', 'laboran', 'laboran', 'laboran', 'Aktif'),
 ('2111123458', 'Joko Susilo', 'Jln. Merpati no 12, Pati', '0813247688115', '0813247688113', 'Laki-laki', 'bendahara', 'bendahara', 'bendahara', 'Aktif'),
-('sa', 'Super Admin', 'sa', '085643540897', '085643540897', 'Laki-laki', 'sa', 'superadmin', 'kepsek', 'Aktif');
+('2111123459', 'Juliari', 'Jln. Merpati no 12, Pati', '0813247688113', '085643520576', 'Laki-laki', 'laboran2', 'laboran2', 'laboran', 'Aktif'),
+('sa', 'Super Admin', 'sa', '085643540897', '085643540897', 'Laki-laki', 'sa', 'superadmin', 'sa', 'Aktif');
 
 --
 -- Indexes for dumped tables
@@ -493,6 +520,13 @@ ALTER TABLE `tb_dtl_pengaduan`
 --
 ALTER TABLE `tb_kategori`
   ADD PRIMARY KEY (`id_kategori`);
+
+--
+-- Indeks untuk tabel `tb_laboran`
+--
+ALTER TABLE `tb_laboran`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `laboran_idx_1` (`no_induk`,`id_laborat`);
 
 --
 -- Indeks untuk tabel `tb_laborat`
@@ -565,7 +599,7 @@ ALTER TABLE `tb_dtl_monitoring`
 -- AUTO_INCREMENT untuk tabel `tb_dtl_peminjaman`
 --
 ALTER TABLE `tb_dtl_peminjaman`
-  MODIFY `id_dtl_peminjaman` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id_dtl_peminjaman` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT untuk tabel `tb_dtl_pengadaan`
@@ -577,7 +611,13 @@ ALTER TABLE `tb_dtl_pengadaan`
 -- AUTO_INCREMENT untuk tabel `tb_dtl_pengaduan`
 --
 ALTER TABLE `tb_dtl_pengaduan`
-  MODIFY `id_dtl_pengaduan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_dtl_pengaduan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT untuk tabel `tb_laboran`
+--
+ALTER TABLE `tb_laboran`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `tb_pendaftaran`

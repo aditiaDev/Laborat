@@ -91,7 +91,11 @@ class Pengaduan extends CI_Controller {
     $this->db->insert_batch('tb_dtl_pengaduan', $dataDtl);
 
 
-    $sql = $this->db->query("SELECT no_wa, SYSDATE() hari_ini FROM tb_user WHERE hak_akses='laboran' AND status='Aktif'")->result_array();
+    $sql = $this->db->query("SELECT no_wa, SYSDATE() hari_ini FROM tb_user A, tb_laboran B WHERE A.hak_akses='laboran' AND A.status='Aktif'
+    AND A.no_induk=B.no_induk
+    AND b.id_laborat='".$this->input->post('id_laborat')."' 
+    UNION ALL
+    SELECT no_wa, SYSDATE() hari_ini FROM tb_user WHERE hak_akses='sarpras'")->result_array();
 
     foreach($sql as $row){
       $no_wa = $row['no_wa'];

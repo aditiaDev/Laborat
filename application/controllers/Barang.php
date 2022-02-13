@@ -17,8 +17,11 @@ class Barang extends CI_Controller {
     $this->db->order_by("deskripsi", "asc");
     $data['kategori'] = $this->db->get('tb_kategori')->result();
 
-    $this->db->order_by("deskripsi", "asc");
-    $data['laborat'] = $this->db->get('tb_laborat')->result();
+    // $this->db->order_by("deskripsi", "asc");
+    $data['laborat'] = $this->db->query("SELECT a.id,A.no_induk, B.nama, A.id_laborat, C.deskripsi FROM tb_laboran A, tb_user B, tb_laborat C
+    WHERE A.no_induk=B.no_induk
+    AND A.id_laborat=C.id_laborat
+    AND A.no_induk='".$this->session->userdata('no_induk')."'")->result();
 
     $this->load->view('template/header');
     $this->load->view('template/sidebar');
@@ -32,6 +35,15 @@ class Barang extends CI_Controller {
     $this->db->from('tb_barang');
     $this->db->order_by('id_barang', 'asc');
     $data['data'] = $this->db->get()->result();
+    echo json_encode($data);
+  }
+
+  public function getAllDataByUser(){
+    $data['data'] = $this->db->query("SELECT A.* FROM tb_barang A, tb_laboran B
+    WHERE A.id_laborat=B.id_laborat
+    AND A.id_kategori LIKE '%".$this->input->post('id_kategori')."%'
+    AND A.id_laborat LIKE '%".$this->input->post('id_laborat')."%'
+    AND B.no_induk='".$this->session->userdata('no_induk')."'")->result();
     echo json_encode($data);
   }
 
